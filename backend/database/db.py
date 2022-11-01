@@ -23,3 +23,38 @@ def add_user(username, password, email):
 def get_movie(id):
     query_movie = { "id" : id}
     return db.movies.find_one(query_movie, {})
+
+def add_movie_to_user(movie_id,username):
+    query_user = { "Username" : username}
+    response = db.users.update_one(query_user, 
+                { "$push": 
+                    { "movies":
+                        {
+                            {"movie_id": movie_id,
+                             "rating" : -1}
+                        }
+                    } 
+                } )
+    
+    return response
+
+def update_rating(rating,movie_id,username):
+    query_user = { "Username" : username, "movies.movie_id":movie_id}
+    response = db.users.update_one(query_user, 
+                { "$set": 
+                    { "movies.$.rating": rating } 
+                } )
+    
+    return response
+
+def remove_movie_from_user(movie_id,username):
+    query_user = { "Username" : username}
+    response = db.users.update_one(query_user, 
+                { "$pull":{
+                    "movies":{
+                        "movie_id":movie_id
+                        }
+                    }
+                } )
+    
+    return response
