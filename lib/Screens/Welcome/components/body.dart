@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:moodie/Screens/Welcome/components/body.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import '../../../constants.dart';
 
-class Body extends StatelessWidget{
+class Body extends StatelessWidget {
+  const Body({
+    Key? key,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size; //This is the size of the screen
-    return Container( 
-      height: size.height,
-      width: double.infinity,
-      child: Stack(
-        children:  <Widget>[],
-      )
-      );
+    return Column(
+      children: [
+        SizedBox(height: defaultPadding * 2),
+        Row(
+          children: [
+            Spacer(),
+            Expanded(
+              flex: 8,
+              child: SvgPicture.asset(
+                "assets/icons/moodie-white.svg",
+              ),
+            ),
+            Spacer(),
+          ],
+        ),
+        SizedBox(height: defaultPadding * 2),
+      ],
+    );
   }
 }

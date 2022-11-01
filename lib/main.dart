@@ -17,7 +17,8 @@ class MyApp extends StatelessWidget {
       title: 'Moodie Auth',
       theme: ThemeData(
         primaryColor: kPrimaryColor,
-        scaffoldBackgroundColor: Color(0x1A0338),
+        // scaffoldBackgroundColor: Color(0x1A0338),
+        scaffoldBackgroundColor: Color(0xFFFFFF),
       ),
       home: WelcomeScreen(),
     );
