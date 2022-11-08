@@ -29,3 +29,29 @@ class Body extends StatelessWidget {
     );
   }
 }
+
+class MobileWelcomeScreen extends StatelessWidget {
+  const MobileWelcomeScreen({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        const WelcomeImage(),
+        Row(
+          children: const [
+            Spacer(),
+            Expanded(
+              flex: 8,
+              child: LoginAndSignupBtn(),
+            ),
+            Spacer(),
+          ],
+        ),
+      ],
+    );
+  }
+}
