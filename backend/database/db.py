@@ -20,6 +20,38 @@ def add_user(username, password, email):
     user = {}
     return db.users.insert_one(user)
 
+def add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
+    movie = { "movie_id" : id,
+            "name" : name ,
+            "genre" : genre,
+            "year" : year,
+            "duration" : duration,
+            "rating" : (rt_rating+imdb_rating)/2,
+            "description" : desc,
+            "trailer" : trailer_link,
+            "poster" : poster_link,
+            "mood" : moods
+            }
+    return db.movies.insert_one(movie)
+
+def get_movies_by_filters(filters):
+    query={}
+    
+    if "genre" in filters:
+        query["genre"] = { "$in": filters["genre"] }
+    
+    if "year" in filters:
+        query["year"] = filters["year"]
+    
+    if "mood" in filters:
+        query["mood"] = { "$in": filters["moods"] }
+    
+    if "rating" in filters:
+        query["rating"] = { "$gte": filters["rating"] }
+    
+    #TO DO: complete filter function
+    return       
+
 def get_movie(id):
     query_movie = { "id" : id}
     return db.movies.find_one(query_movie, {})
