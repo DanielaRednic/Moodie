@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class UserPage extends StatelessWidget {
-  const UserPage({Key? key}) : super(key: key);
+class MoviePicker extends StatelessWidget {
+  const MoviePicker({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
   return Background();
