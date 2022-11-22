@@ -34,7 +34,7 @@ def add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trail
             }
     return db.movies.insert_one(movie)
 
-def get_movies_by_filters(filters):
+def aggregate_filters(filters):
     query={}
     
     if "genre" in filters:
@@ -49,8 +49,17 @@ def get_movies_by_filters(filters):
     if "rating" in filters:
         query["rating"] = { "$gte": filters["rating"] }
     
-    #TO DO: complete filter function
-    return       
+    return db.movies.aggregate([
+        { "$match": query },
+        { "$sample": { "size": 1 } } 
+    ])
+
+
+def get_random_movie(filters):
+    
+    movie = aggregate_filters(filters)
+    
+    return movie
 
 def get_movie(id):
     query_movie = { "id" : id}
