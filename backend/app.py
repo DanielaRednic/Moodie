@@ -13,6 +13,8 @@ app = Flask(__name__)
 def sample():
    return "Hello, backend!"
 
+
+
 @app.route('/id/<id>', methods=['GET'])
 def api_get_movie_by_id(id):
        movie = DB.get_movie(id)
@@ -22,13 +24,32 @@ def api_get_movie_by_id(id):
                 "movie": movie,
             }
         )
+
+@app.route('/user/movie', methods=["POST"])
+def api_add_user():
+       user = request.args.get('user')
+       passw = request.args.get('pass')
+       email = request.args.get('email')
        
-@app.route('/remove', methods=["DELETE"])
+       return DB.add_user(user, passw, email)
+
+@app.route('/user/movie', methods=["POST"])
+def api_add_movie_to_user():
+       id = request.args.get('id')
+       user = request.args.get('user')
+       
+       return DB.add_movie_to_user(id,user)
+       
+@app.route('/user/movie', methods=["DELETE"])
 def api_remove_movie_from_user():
        id = request.args.get('id')
        user = request.args.get('user')
        
        return DB.remove_movie_from_user(id,user)
+
+@app.route('/movies/rand', methods=["GET"])
+def api_get_random_movie():
+       genre = request.args.get('genre')
     
 @app.route('/rating/<value>', methods=["POST"])
 def add_rating(rating):
