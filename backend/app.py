@@ -25,7 +25,7 @@ def api_get_movie_by_id(id):
             }
         )
 
-@app.route('/user/movie', methods=["POST"])
+@app.route('/user/add', methods=["POST"])
 def api_add_user():
        user = request.args.get('user')
        passw = request.args.get('pass')
@@ -33,37 +33,58 @@ def api_add_user():
        
        return DB.add_user(user, passw, email)
 
-@app.route('/user/movie', methods=["POST"])
+@app.route('/user/movie/add', methods=["POST"])
 def api_add_movie_to_user():
        id = request.args.get('id')
        user = request.args.get('user')
        
        return DB.add_movie_to_user(id,user)
        
-@app.route('/user/movie', methods=["DELETE"])
+@app.route('/user/movie/delete', methods=["DELETE"])
 def api_remove_movie_from_user():
        id = request.args.get('id')
        user = request.args.get('user')
        
        return DB.remove_movie_from_user(id,user)
 
+@app.route('/movies/add', methods=["POST"])
+def add_movie_to_db():
+       return
+
 @app.route('/movies/rand', methods=["GET"])
 def api_get_random_movie():
        genre = request.args.get('genre')
+       year = request.args.get('year')
+       mood = request.args.get('mood')
+       rating = request.args.get('rating')
+       
+       filters = []
+       filters['genre'] = genre
+       filters['year'] = year
+       filters['mood'] = mood
+       filters['rating'] = rating
+       
+       movie = DB.get_random_movie(filters)
+       
+       return jsonify(
+            {
+                "movie": movie,
+            }
+        )
     
 @app.route('/rating/<value>', methods=["POST"])
 def add_rating(rating):
-       id = request.args.get('id')
+       movie_id = request.args.get('id')
        user = request.args.get('user')
        
-       return DB.update_rating(rating, id, user)
+       return DB.update_rating(rating, movie_id, user)
 
 @app.route('/rating/<value>', methods=["PUT"])
 def update_rating(rating):
-       id = request.args.get('id')
+       movie_id = request.args.get('id')
        user = request.args.get('user')
        
-       return DB.update_rating(rating, id, user)
+       return DB.update_rating(rating, movie_id, user)
   
 if __name__ == '__main__':
    app.config['DEBUG'] = True
