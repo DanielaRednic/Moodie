@@ -49,7 +49,18 @@ def api_remove_movie_from_user():
 
 @app.route('/movies/add', methods=["POST"])
 def add_movie_to_db():
-       return
+       id = request.args.get('id')
+       name = request.args.get('name')
+       genre = request.args.get('genre')
+       year = request.args.get('year')
+       duration = request.args.get('duration')
+       moods = request.args.get('moods')
+       rt_rating = request.args.get('rt_rating')
+       imdb_rating = request.args.get('imdb_rating')
+       desc = request.args.get('desc')
+       trailer_link = request.args.get('trailer_link')
+       poster_link = request.args.get('poster_link')
+       return DB.add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
 
 @app.route('/movies/rand', methods=["GET"])
 def api_get_random_movie():
