@@ -23,9 +23,7 @@ class SignUpScreen extends StatelessWidget {
 }
 
 class MobileSignupScreen extends StatelessWidget {
-  const MobileSignupScreen({
-    Key? key,
-  }) : super(key: key);
+  const MobileSignupScreen({Key? key,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

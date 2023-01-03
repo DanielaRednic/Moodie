@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../constants.dart';
 import 'login_and_signup.dart';
 
-
-
 class Body extends StatelessWidget {
   const Body({
     Key? key,
