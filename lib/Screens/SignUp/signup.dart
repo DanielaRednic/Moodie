@@ -4,7 +4,6 @@ import '../../constants.dart';
 import '../Welcome/components/background.dart';
 import 'components/sign_up_top_image.dart';
 import 'components/signup_form.dart';
-import 'components/socal_sign_up.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -16,7 +15,6 @@ class SignUpScreen extends StatelessWidget {
         child: Responsive(
           mobile: const MobileSignupScreen(),
           desktop: Row(
-            children: null,
           ),
         ),
       ),

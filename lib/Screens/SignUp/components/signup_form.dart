@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
-import '../../../components/already_have_an_account_acheck.dart';
 import '../../../constants.dart';
-import '../../Login/login_screen.dart';
+import '../../Login/login.dart';
 
 class SignUpForm extends StatelessWidget {
   const SignUpForm({
@@ -18,9 +18,11 @@ class SignUpForm extends StatelessWidget {
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             cursorColor: kPrimaryColor,
+            style: TextStyle(color: Colors.white),
             onSaved: (email) {},
             decoration: InputDecoration(
-              hintText: "Your email",
+              hintText: "E-mail",
+              hintStyle: TextStyle(color: Colors.white),
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(defaultPadding),
                 child: Icon(Icons.person),
@@ -28,13 +30,32 @@ class SignUpForm extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: TextFormField(
+              textInputAction: TextInputAction.next,
+              obscureText: true,
+              cursorColor: kPrimaryColor,
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: "Username",
+                hintStyle: TextStyle(color: Colors.white),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.all(defaultPadding),
+                  child: Icon(Icons.person),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
               textInputAction: TextInputAction.done,
               obscureText: true,
               cursorColor: kPrimaryColor,
+              style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: "Your password",
+                hintText: "Password",
+                hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Padding(
                   padding: const EdgeInsets.all(defaultPadding),
                   child: Icon(Icons.lock),
@@ -42,25 +63,47 @@ class SignUpForm extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: defaultPadding / 2),
+          const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
             onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
             child: Text("Sign Up".toUpperCase()),
           ),
-          const SizedBox(height: defaultPadding),
-          AlreadyHaveAnAccountCheck(
-            login: false,
-            press: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) {
-                    return LoginScreen();
-                  },
-                ),
-              );
-            },
+          ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return WelcomeScreen();
+                },
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
+          child: Text(
+            "Home".toUpperCase(),
+            style: TextStyle(color: Colors.white),
           ),
+        ),
+          const SizedBox(height: defaultPadding),
+          // AlreadyHaveAnAccountCheck(
+          //   login: false,
+          //   press: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) {
+          //           return LoginScreen();
+          //         },
+          //       ),
+          //     );
+          //   },
+          // ),
         ],
       ),
     );
