@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 import 'package:moodie/constants.dart';
 
+import 'Screens/navbar.dart';
+
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/Screens/MoviePicker/movie_picker.dart';
 
 import '../../../constants.dart';
 import '../../Login/login.dart';
@@ -52,6 +53,26 @@ class LoginAndSignupBtn extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "Sign Up".toUpperCase(),
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+        const SizedBox(height: 16),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return MoviePicker();
+                },
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
+          child: Text(
+            "Movie Picker".toUpperCase(),
             style: TextStyle(color: Colors.white),
           ),
         ),

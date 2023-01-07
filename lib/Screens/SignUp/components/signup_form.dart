@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../../../constants.dart';
-import '../../Login/login.dart';
+import 'confirm_password_field.dart';
+import 'custom_password_field.dart';
 
 class SignUpForm extends StatelessWidget {
   const SignUpForm({
@@ -11,6 +12,8 @@ class SignUpForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
     return Form(
       child: Column(
         children: [
@@ -24,8 +27,8 @@ class SignUpForm extends StatelessWidget {
               hintText: "E-mail",
               hintStyle: TextStyle(color: Colors.white),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(defaultPadding),
-                child: Icon(Icons.person),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                child: Icon(Icons.email, color: Colors.white),
               ),
             ),
           ),
@@ -33,36 +36,20 @@ class SignUpForm extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
               textInputAction: TextInputAction.next,
-              obscureText: true,
               cursorColor: kPrimaryColor,
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 hintText: "Username",
                 hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Padding(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.person),
+                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: TextFormField(
-              textInputAction: TextInputAction.done,
-              obscureText: true,
-              cursorColor: kPrimaryColor,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "Password",
-                hintStyle: TextStyle(color: Colors.white),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.lock),
-                ),
-              ),
-            ),
-          ),
+          PasswordTextField(controller: passwordController),
+          ConfirmPasswordTextField(controller: confirmPasswordController),
           const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
             onPressed: () {},

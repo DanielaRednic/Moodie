@@ -3,6 +3,7 @@ import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../../../constants.dart';
 import '../../Login/login.dart';
+import '../../SignUp/components/custom_password_field.dart';
 
 class LoginForm extends StatelessWidget {
   const LoginForm({
@@ -11,6 +12,7 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController passwordController = TextEditingController();
     return Form(
       child: Column(
         children: [
@@ -21,31 +23,15 @@ class LoginForm extends StatelessWidget {
             style: TextStyle(color: Colors.white),
             onSaved: (email) {},
             decoration: InputDecoration(
-              hintText: "E-mail/Username",
+              hintText: "E-mail / Username",
               hintStyle: TextStyle(color: Colors.white),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(defaultPadding),
-                child: Icon(Icons.person),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                child: Icon(Icons.person, color: Colors.white),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: TextFormField(
-              textInputAction: TextInputAction.done,
-              obscureText: true,
-              cursorColor: kPrimaryColor,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
-                hintText: "Password",
-                hintStyle: TextStyle(color: Colors.white),
-                prefixIcon: Padding(
-                  padding: const EdgeInsets.all(defaultPadding),
-                  child: Icon(Icons.lock),
-                ),
-              ),
-            ),
-          ),
+          PasswordTextField(controller: passwordController),
           const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
             onPressed: () {},

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/Screens/navbar.dart';
 
 class Background extends StatelessWidget {
   final Widget child;
@@ -14,6 +15,7 @@ class Background extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: NavBar(),
       resizeToAvoidBottomInset: false,
       body: Container(
         width: double.infinity,
