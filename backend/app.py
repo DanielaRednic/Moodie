@@ -1,11 +1,36 @@
 from flask import Flask, jsonify, request
 import os
 import configparser
+import re
 import database.db as DB
 
 config = configparser.ConfigParser()
 #print(os.path.abspath(os.path.join("data.ini")))
 config.read(os.path.abspath(os.path.join("data.ini")))
+
+def password_check(password):
+       SpecialSym =['$', '@', '#', '%','.',',','!','?']
+       val = True
+       
+       if len(password) < 6:
+              val = False
+              
+       if len(password) > 20:
+              val = False
+              
+       if not any(char.isdigit() for char in password):
+              val = False
+              
+       if not any(char.isupper() for char in password):
+              val = False
+              
+       if not any(char.islower() for char in password):
+              val = False
+              
+       if not any(char in SpecialSym for char in password):
+              val = False
+              
+       return val
 
 app = Flask(__name__)
 
@@ -19,7 +44,7 @@ def api_get_movie_by_id(given_id=None):
               id = request.args.get("id")
        else:
               id= given_id
-       movie = DB.get_movie(id)
+       movie = DB.get_movie(int(id))
        
        return jsonify(
             {
@@ -38,21 +63,29 @@ def api_get_movie_by_id(given_id=None):
 @app.route('/user/add', methods=["POST"])
 def api_add_user():
        user = request.form.get('user')
-       passw = request.form.get('pass').encode("UTF-8")
+       passw = request.form.get('pass')
        email = request.form.get('email')
        
-       print(DB.search_user(user))
-       if (DB.search_user(user)):
-              return jsonify({"error": "User already exists",
-                              "return": True})
-       
-       if(DB.search_email(email)):
-              return jsonify({"error": "Email already in use",
+       if(passw!=request.form.get('confirm_pass')):
+              return jsonify({"error": "Passwords do not match",
                               "return": False})
        
-       return DB.add_user(user, passw, email)
+       if(not(password_check(passw))):
+              return jsonify({"error": "Password does not meet requirements",
+                              "return": False})
+              
+       regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+       if(not(re.fullmatch(regex,email))):
+              return jsonify({"error": "Email is invalid",
+                              "return": False})
+       
+       if (DB.search_user(user,email)):
+              return jsonify({"error": "User or Email already in use",
+                              "return": False})
+       
+       return DB.add_user(user, passw.encode("UTF-8"), email)
 
-@app.route('/user/verify')
+@app.route('/user/verify', methods=["GET"])
 def api_verify_user():
        username = request.form.get('user')
        passw = request.form.get('pass').encode("UTF-8")
@@ -74,14 +107,14 @@ def api_add_movie_to_user():
        id = request.form.get('id')
        user = request.form.get('user')
        
-       return DB.add_movie_to_user(id,user)
+       return DB.add_movie_to_user(int(id),user)
        
 @app.route('/user/movie/delete', methods=["DELETE"])
 def api_remove_movie_from_user():
        id = request.form.get('id')
        user = request.form.get('user')
        
-       return DB.remove_movie_from_user(id,user)
+       return DB.remove_movie_from_user(int(id),user)
 
 @app.route('/movies/add', methods=["POST"])
 def add_movie_to_db():
@@ -116,7 +149,7 @@ def api_get_random_movie():
        for movie in result:
               movie_id= movie['movie_id']
        
-       return api_get_movie_by_id(movie_id)
+       return api_get_movie_by_id(int(movie_id))
        
     
 @app.route('/rating', methods=["POST","PUT"])
@@ -125,7 +158,7 @@ def add_rating():
        movie_id = request.form.get('id')
        user = request.form.get('user')
        
-       return DB.update_rating(rating, movie_id, user)
+       return DB.update_rating(rating, int(movie_id), user)
 
 # @app.route('/rating', methods=["PUT"])
 # def update_rating():
@@ -138,5 +171,4 @@ def add_rating():
 if __name__ == '__main__':
    app.config['DEBUG'] = True
    app.config['MONGO_URI'] = config['PROD']['DB_URI']
-   print(app.config['MONGO_URI'])
    app.run(host="0.0.0.0")

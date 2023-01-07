@@ -21,18 +21,16 @@ def add_user(username, password, email):
     db.users.insert_one(user)
     return jsonify({"return": True})
 
-def search_user(username, password = None):
-    if password is None:
+def search_user(username=None, email = None):
+    if email is None:
         query = {"username": username}
+        return db.users.find_one(query,{})
     else:
-        query = {"username": username, "password": password}
-
-    return db.users.find_one(query)
-
-def search_email(email):
-    query ={"email": email}
-    
-    return db.users.find_one(query)
+        query = { "$or":[
+            {"username":username},
+            {"email":email}
+        ]}
+        return db.users.find_one(query,{"username":1,"password":1})
 
 def add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
     movie = { "movie_id" : id,
@@ -57,15 +55,15 @@ def aggregate_filters(filters):
         genre=[filters["genre"]]
         query["genre"] = { "$in": genre }
     
-    # if "year" in filters:
-    #     query["year"] = filters["year"]
+    if "year" in filters:
+        query["year"] = filters["year"]
     
-    # if "mood" in filters:
-    #     mood=[filters["moods"]]
-    #     query["mood"] = { "$in": mood }
+    if "mood" in filters:
+        mood=[filters["moods"]]
+        query["mood"] = { "$in": mood }
     
-    # if "rating" in filters:
-    #     query["rating"] = { "$gte": filters["rating"] }
+    if "rating" in filters:
+        query["rating"] = { "$gte": filters["rating"] }
     
     print(query)
     return db.movies.aggregate([
@@ -82,7 +80,7 @@ def get_random_movie(filters):
 
 def get_movie(id):
     query_movie = { "movie_id" : id}
-    return db.movies.find_one(query_movie)
+    return db.movies.find(query_movie)
 
 def add_movie_to_user(movie_id,username):
     query_user = { "username" : username}
@@ -97,14 +95,10 @@ def add_movie_to_user(movie_id,username):
 
 def update_rating(rating,movie_id,username):
     query_user = { "username" : username, "movies.movie_id":movie_id}
-    print(db.users.find_one(query_user))
-    response = db.users.update_one(query_user, 
+    db.users.update_one(query_user, 
                 { "$set": 
-                    { "movies":
-                        {
-                            "movie_id": movie_id,
-                            "rating": rating 
-                        } 
+                    { 
+                     "movies.$.rating":int(rating) 
                     } 
                 })
     
@@ -112,7 +106,7 @@ def update_rating(rating,movie_id,username):
 
 def remove_movie_from_user(movie_id,username):
     query_user = { "username" : username}
-    response = db.users.update_one(query_user, 
+    db.users.update_one(query_user, 
                 { "$pull":{
                     "movies":{
                         "movie_id":movie_id
