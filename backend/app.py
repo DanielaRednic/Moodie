@@ -40,25 +40,27 @@ def sample():
 
 @app.route('/movies', methods=['GET'])
 def api_get_movie_by_id(given_id=None):
-       if given_id==None:
+       if given_id is None:
               id = request.args.get("id")
        else:
               id= given_id
-       movie = DB.get_movie(int(id))
+              
+       result = DB.get_movie(int(id))
        
-       return jsonify(
-            {
-                "title": movie["name"],
-                "genre": movie["genre"],
-                "year": movie["year"],
-                "duration": movie["duration"],
-                "rating": movie["rating"],
-                "description": movie["description"],
-                "trailer": movie["trailer"],
-                "poster": movie["poster"],
-                "mood": movie["mood"]
-            }
-        )
+       for movie in result:
+              return jsonify(
+              {
+                     "title": movie["name"],
+                     "genre": movie["genre"],
+                     "year": movie["year"],
+                     "duration": movie["duration"],
+                     "rating": movie["rating"],
+                     "description": movie["description"],
+                     "trailer": movie["trailer"],
+                     "poster": movie["poster"],
+                     "mood": movie["mood"]
+              }
+              )
 
 @app.route('/user/add', methods=["POST"])
 def api_add_user():
@@ -120,15 +122,16 @@ def api_remove_movie_from_user():
 def add_movie_to_db():
        id = request.form.get('id')
        name = request.form.get('name')
-       genre = request.form.get('genre')
+       genre = request.form.getlist('genre')
        year = request.form.get('year')
        duration = request.form.get('duration')
-       moods = request.form.get('moods')
+       moods = request.form.getlist('moods')
        rt_rating = request.form.get('rt_rating')
        imdb_rating = request.form.get('imdb_rating')
        desc = request.form.get('desc')
        trailer_link = request.form.get('trailer_link')
        poster_link = request.form.get('poster_link')
+       print(id,name,genre,year,duration,moods,rt_rating,imdb_rating,rt_rating,desc,trailer_link,poster_link)
        return DB.add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
 
 @app.route('/movies/rand', methods=["GET"])

@@ -33,11 +33,11 @@ def search_user(username=None, email = None):
         return db.users.find_one(query,{"username":1,"password":1})
 
 def add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
-    movie = { "movie_id" : id,
+    movie = { "movie_id" : db.movies.count_documents({})+1,
             "name" : name ,
             "genre" : genre,
-            "year" : year,
-            "duration" : duration,
+            "year" : int(year),
+            "duration" : int(duration),
             "rating" : (int(rt_rating)+float(imdb_rating)*10)/2,
             "description" : desc,
             "trailer" : trailer_link,
