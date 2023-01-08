@@ -131,7 +131,7 @@ def add_movie_to_db():
        desc = request.form.get('desc')
        trailer_link = request.form.get('trailer_link')
        poster_link = request.form.get('poster_link')
-       print(id,name,genre,year,duration,moods,rt_rating,imdb_rating,rt_rating,desc,trailer_link,poster_link)
+       
        return DB.add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
 
 @app.route('/movies/rand', methods=["GET"])
