@@ -120,7 +120,6 @@ def api_remove_movie_from_user():
 
 @app.route('/movies/add', methods=["POST"])
 def add_movie_to_db():
-       id = request.form.get('id')
        name = request.form.get('name')
        genre = request.form.getlist('genre')
        year = request.form.get('year')
@@ -132,7 +131,7 @@ def add_movie_to_db():
        trailer_link = request.form.get('trailer_link')
        poster_link = request.form.get('poster_link')
        
-       return DB.add_movie(id,name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
+       return DB.add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
 
 @app.route('/movies/rand', methods=["GET"])
 def api_get_random_movie():
