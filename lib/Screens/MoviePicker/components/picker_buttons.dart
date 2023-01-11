@@ -53,7 +53,24 @@ class PickerButtonsState extends State<PickerButtons> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 16),
-          DropdownButton<String>(
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Color.fromARGB(255 ,83, 15, 43),
+                Color.fromARGB(255 ,255, 153, 1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(100),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.57),
+                blurRadius: 5)
+            ], 
+          ),
+          child: DropdownButton<String>(
             onChanged: (String? newValue){
               setState((){
               dropdownValue_mood = newValue!;
@@ -69,6 +86,7 @@ class PickerButtonsState extends State<PickerButtons> {
               },
             ).toList(),
           ),
+            ),
           const SizedBox(height: 16),
           DropdownButton<String>(
             onChanged: (String? newValue){
