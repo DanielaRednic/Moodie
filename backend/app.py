@@ -64,11 +64,12 @@ def api_get_movie_by_id(given_id=None):
 
 @app.route('/user/add', methods=["POST"])
 def api_add_user():
-       user = request.form.get('user')
-       passw = request.form.get('pass')
-       email = request.form.get('email')
+       data = request.json
+       user = data['user']
+       passw = data['pass']
+       email = data['email']
        
-       if(passw!=request.form.get('confirm_pass')):
+       if(passw.encode("UTF-8")!=data['confirm_pass'].encode("UTF-8")):
               return jsonify({"error": "Passwords do not match",
                               "return": False})
        
@@ -89,13 +90,13 @@ def api_add_user():
 
 @app.route('/user/verify', methods=["GET"])
 def api_verify_user():
-       username = request.form.get('user')
-       passw = request.form.get('pass').encode("UTF-8")
+       user = request.args.get('user')
+       passw = request.args.get('pass').encode("UTF-8")
        
-       user = DB.search_user(username)
+       user = DB.search_user(username=user,email=user)
        
        if(user):
-              if(user['username'] == username and user['password'] == passw):
+              if(user['password'] == passw):
                      return jsonify({"return":True})
               else:
                      return jsonify({"error": "User or password incorrect",
