@@ -70,7 +70,8 @@ def aggregate_filters(filters):
         query["genre"] = { "$in": genre }
     
     if "year" in filters:
-        query["year"] = filters["year"]
+        years=[filters["year"]]
+        query["year"] = { "$in": years }
     
     if "mood" in filters:
         mood=[filters["moods"]]
@@ -78,6 +79,18 @@ def aggregate_filters(filters):
     
     if "rating" in filters:
         query["rating"] = { "$gte": filters["rating"] }
+    
+    if "duration" in filters:
+        if filters["duration"] == 'under 1.5 hours':
+            query["duration"] = { "$lt": 90 }
+        elif filters["duration"] == '1.5-2 hours':
+            query["duration"] = {"$gte": 90, "lt": 120}
+        elif filters["duration"] == 'over 2 hours':
+            query["duration"] = {"$gte": 120}
+        elif filters["duration"] == '2-3 hours':
+            query["duration"] = {"$gte": 120, "lt": 180}
+        elif filters["duration"] == 'over 3 hours':
+            query["duration"] = {"$gte": 180}
     
     print(query)
     return db.movies.aggregate([
