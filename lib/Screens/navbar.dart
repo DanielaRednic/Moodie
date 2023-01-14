@@ -26,8 +26,8 @@ class NavBar extends StatelessWidget{
           )
           ),
           ListTile(
-            leading: Icon(Icons.table_view_outlined),
-            title: Text("My movies", style: TextStyle(color: Colors.white)),
+            leading: Icon(Icons.table_view_outlined, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
+            title: Text("My movies", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
             onTap: () =>Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -39,8 +39,8 @@ class NavBar extends StatelessWidget{
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.rocket_launch_outlined),
-            title: Text("Movie time!", style: TextStyle(color: Colors.white)),
+            leading: Icon(Icons.rocket_launch_outlined, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
+            title: Text("Movie time!", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
             onTap: () =>Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -52,8 +52,8 @@ class NavBar extends StatelessWidget{
           ),
           Divider(),
           ListTile(
-            leading: Icon(Icons.logout),
-            title: Text("Log out", style: TextStyle(color: Colors.white)),
+            leading: Icon(Icons.logout, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
+            title: Text("Log out", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
             onTap: () =>Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -62,15 +62,7 @@ class NavBar extends StatelessWidget{
                   },
                 ),
               ),
-          ),
-          Expanded(
-              flex: 1, 
-              child: Image.asset(
-              'assets/images/tanooki-logo.png',
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
-              ),
-            ),
+          )
         ],
       )
     );
