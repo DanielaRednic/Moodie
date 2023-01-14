@@ -62,6 +62,38 @@ def api_get_movie_by_id(given_id=None):
               }
               )
 
+@app.route('/user/get/email', methods=["GET"])
+def api_get_email():
+       user = request.args.get('user')
+       
+       result = DB.get_email(user)
+       
+       if(result):
+              return jsonify({
+                     "email":result["email"],
+                     "return": True
+              })
+       
+       return jsonify({
+              "return": False
+       })
+
+@app.route('/user/get/movies', methods=["GET"])
+def api_get_user_movies():
+       user = request.args.get('user')
+       
+       result = DB.get_user_movies(user)
+       
+       if(result):
+              return jsonify({
+                     "movies":result["movies"],
+                     "return": True
+              })
+       
+       return jsonify({
+              "return": False
+       })
+
 @app.route('/user/add', methods=["POST"])
 def api_add_user():
        data = request.json

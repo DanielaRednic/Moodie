@@ -32,6 +32,12 @@ def search_user(username=None, email = None):
         ]}
         return db.users.find_one(query,{"username":1,"password":1})
 
+def get_email(username):
+    return db.users.find_one({"username": username},{"email":1})
+
+def get_user_movies(username):
+    return db.users.find_one({"username": username},{"movies":1})   
+
 def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
     movie = { "movie_id" : db.movies.count_documents({})+1,
             "name" : name ,

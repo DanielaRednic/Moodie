@@ -22,7 +22,7 @@ class LoginForm extends StatelessWidget {
 
     Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
       final queryParameters='user=${userinfoController.text}&pass=${String.fromCharCodes(utf8.encode(passwordController.text))}';
-      final uri = 'http://192.168.0.102:5000/user/verify?$queryParameters';
+      final uri = '$server/user/verify?$queryParameters';
       final response = await http.get(Uri.parse(uri));
 
       if(response.statusCode == 200){
