@@ -4,17 +4,19 @@ import 'package:moodie/Screens/MoviePicker/movie_picker.dart';
 import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../constants.dart';
+import '../user_details.dart';
 
 class NavBar extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: kSecondPrimaryColor,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           UserAccountsDrawerHeader(
-          accountName: Text('Test', style: TextStyle(color: Colors.white)),
-          accountEmail: Text("email@gmail.com", style: TextStyle(color: Colors.white)),
+          accountName: Text(user, style: TextStyle(color: Colors.white)),
+          accountEmail: Text(email, style: TextStyle(color: Colors.white)),
           currentAccountPicture: CircleAvatar(
             child: Image.asset(
               'assets/images/moodie-purple.png'
@@ -63,13 +65,16 @@ class NavBar extends StatelessWidget{
                 ),
               ),
           ),
-          Expanded(
-              flex: 1, 
-              child: Image.asset(
-              'assets/images/tanooki-logo.png',
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomCenter,
-              ),
+          Row(
+            children:[
+            Expanded(
+                flex: 1, 
+                child: Image.asset(
+                'assets/images/tanooki-logo.png',
+                fit: BoxFit.fitWidth,
+                alignment: Alignment.bottomCenter,
+                ),
+              )],
             ),
         ],
       )

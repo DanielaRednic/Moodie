@@ -62,6 +62,23 @@ def api_get_movie_by_id(given_id=None):
               }
               )
 
+@app.route('/user/get/details', methods=["GET"])
+def api_get_user_details():
+       user = request.args.get('user')
+       
+       result = DB.get_details(user)
+       
+       if(result):
+              return jsonify({
+                     "username": result["username"],
+                     "email":result["email"],
+                     "return": True
+              })
+       
+       return jsonify({
+              "return": False
+       })
+
 @app.route('/user/get/email', methods=["GET"])
 def api_get_email():
        user = request.args.get('user')

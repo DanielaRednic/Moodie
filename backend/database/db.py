@@ -31,6 +31,14 @@ def search_user(username=None, email = None):
             {"email":email}
         ]}
         return db.users.find_one(query,{"username":1,"password":1})
+    
+def get_details(userOrmail):
+    query = { "$or":[
+            {"username":userOrmail},
+            {"email":userOrmail}
+        ]}
+    
+    return db.users.find_one(query,{"username":1,"email":1})
 
 def get_email(username):
     return db.users.find_one({"username": username},{"email":1})

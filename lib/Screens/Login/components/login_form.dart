@@ -6,6 +6,7 @@ import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 import '../../../constants.dart';
 import '../../Login/login.dart';
 import '../../SignUp/components/custom_password_field.dart';
+import '../../../user_details.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -22,10 +23,17 @@ class LoginForm extends StatelessWidget {
 
     Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
       final queryParameters='user=${userinfoController.text}&pass=${String.fromCharCodes(utf8.encode(passwordController.text))}';
-      final uri = '$server/user/verify?$queryParameters';
+      String uri = '$server/user/verify?$queryParameters';
       final response = await http.get(Uri.parse(uri));
 
       if(response.statusCode == 200){
+        uri = '$server/user/get/details?user=${userinfoController.text}';
+        final details = await http.get(Uri.parse(uri));
+        if(details.statusCode == 200){
+          final info = jsonDecode(details.body);
+          setName(info["username"]);
+          setEmail(info["email"]);
+        }
         return jsonDecode(response.body);
       }else {
         throw Exception('Failed fetching user');
