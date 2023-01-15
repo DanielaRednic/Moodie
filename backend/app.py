@@ -33,6 +33,14 @@ def password_check(password):
               
        return val
 
+def get_duration_string(duration):
+       hours = duration//60
+       minutes = duration%60
+       
+       time_string= "{}h:{}m".format(hours,minutes)
+       print(time_string)
+       return time_string
+
 app = Flask(__name__)
 
 @app.route("/")
@@ -294,7 +302,7 @@ def api_get_random_movie():
                             "title": movie["name"],
                             "genre": movie["genre"],
                             "year": movie["year"],
-                            "duration": movie["duration"],
+                            "duration": get_duration_string(movie["duration"]),
                             "rating": movie["rating"],
                             "description": movie["description"],
                             "trailer": movie["trailer"],
