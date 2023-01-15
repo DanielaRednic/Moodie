@@ -1,64 +1,29 @@
-// import 'package:flutter/material.dart';
-// import 'package:video_player/video_player.dart';
+import 'package:flutter/material.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-// class VideoPlayerWidget extends StatelessWidget {
-//   final VideoPlayerController controller;
-
-//   const VideoPlayerWidget({
-//     Key? key,
-//     required this.controller,
-//   }) : super(key: key);
+// class YouTubePlayerFlutter extends StatefulWidget {
+//   const YouTubePlayerFlutter({Key? key}) : super(key);
 
 //   @override
-//   Widget build(BuildContext context) => 
-//     controller != null && controller.value.initialized
-//     ? Container (alignment: Alignment.center, child: buildVideo())
-//     : Container(
-//       height: 100,
-//       child: Center(child:CircularProgressIndicator()),
-//     );
-
-//     Widget buildVideo() => buildVideoPlayer();
-
-//     Widget buildVideoPlayer() => VideoPlayer(controller);
-  
+//   State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState();
 // }
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+// class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
+//   final videoURL= "https://www.youtube.com/watch?v=5PSNL1qE6VY";
 
-YoutubePlayerController _controller = YoutubePlayerController(
-    initialVideoId: 'iLnmTe5Q2Qw',
-    flags: YoutubePlayerFlags(
-        autoPlay: true,
-        mute: true,
-    ),
-);
+//   late YoutubePlayerController _controller;
 
-YoutubePlayer(
-    controller: _controller,
-    showVideoProgressIndicator: true,
-    videoProgressIndicatorColor: Colors.amber,
-    progressColors: ProgressColors(
-        playedColor: Colors.amber,
-        handleColor: Colors.amberAccent,
-    ),
-    onReady () {
-        _controller.addListener(listener);
-    },
-),
-YoutubePlayerBuilder(
-    player: YoutubePlayer(
-        controller: _controller,
-    ),
-    builder: (context, player){
-        return Column(
-            children: [
-                // some widgets
-                player,
-                //some other widgets
-            ],
-        );
-    ),
-),
+//   @override
+//   void initState() {
+//     final videoID = YoutubePlayer.convertUrlToId(videoURL);
+
+//     _controller = new YoutubePlayerController(
+//       initialVideoId:  videoID!,
+//       flags: const YoutubePlayerFlags(
+//         autoPlay: false,
+//       ),
+//     );
+//     super.initState();
+//   }
+//   }
+// }

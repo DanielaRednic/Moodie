@@ -11,6 +11,7 @@ class MovieDetails extends StatelessWidget {
   Widget build(BuildContext context) {
   return Scaffold(
     drawer: NavBar(),
+    body: YouTubePlayerFlutter()
   );
   }
 }
