@@ -1,3 +1,4 @@
+import string
 from flask import Flask, jsonify, request
 import os
 import configparser
@@ -183,9 +184,16 @@ def add_movie_to_db():
        
        return DB.add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
 
-@app.route('/movies/rand', methods=["GET"])
+@app.route('/movies/rand', methods=["GET","POST"])
 def api_get_random_movie():
-       data = request.json      
+       data = request.json
+       data_list= list(data["filters"][1:-1].split(","))
+       
+       for i in range(len(data_list)):
+              data_list[i]= data_list[i][1:-1]
+              
+       print(data_list)
+       
        moods = [
               'Adventurous',
               'Angry',
@@ -215,22 +223,22 @@ def api_get_random_movie():
               'Thriller',
               ]
        
-       ratings = {
-              '10':10,
-              '9.5':9.5,
-              '9':9,
-              '8.5':8.5,
-              '8':8,
-              '7.5':7.5,
-              '7':7,
-              '6.5':6.5,
-              '6':6,
-              '5.5':5.5,
-              '5':5,
-              '4.5':4.5,
-              '4':4,
-              'Less than 4':0,
-       }
+       ratings = [
+              '10',
+              '9.5',
+              '9',
+              '8.5',
+              '8',
+              '7.5',
+              '7',
+              '6.5',
+              '6',
+              '5.5',
+              '5',
+              '4.5',
+              '4',
+              'Less than 4',
+       ]
        
        years = [
               '2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004',
@@ -250,28 +258,28 @@ def api_get_random_movie():
        filters = {}
        
        for duration in durations:
-              if duration in data["filters"]:
+              if duration in data_list:
                      filters["duration"]= duration
                      break
        
-       for key_rating in ratings:
-              if key_rating in data["filters"]:
-                     filters["rating"]= ratings[key_rating]
-                     break
+       for value in ratings:
+              if value in data_list:
+                     filters["rating"]= float(value)
+                     
        
        genre_list=[]
        for genre in genres:
-              if genre in data["filters"]:
+              if genre in data_list:
                      genre_list.append(str.lower(genre))
        
        year_list=[]
        for year in years:
-              if year in data["filters"]:
+              if year in data_list:
                      year_list.append(int(year))
        
        mood_list=[]
        for mood in moods:
-              if mood in data["filters"]:
+              if mood in data_list:
                      mood_list.append(str.lower(mood))
        
        filters['genre']= genre_list
