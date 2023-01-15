@@ -35,14 +35,14 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
 
   @override
   Widget build(BuildContext context) {
-    String movieTitle = "Avatar";
-    String moviePoster = 'https://m.media-amazon.com/images/M/MV5BZDA0OGQxNTItMDZkMC00N2UyLTg3MzMtYTJmNjg3Nzk5MzRiXkEyXkFqcGdeQXVyMjUzOTY1NTc@._V1_FMjpg_UY720_.jpg';
-    String movieYear = "2009";
-    List<String> movieGenre = ['Action','Adventure', 'Fantasy'];
-    String movieDuration = "162";
-    String imdbRating = "9.5";
-    String rottenRating = "95%";
-    String movieDescription = "A paraplegic Marine dispatched to the moon Pandora on a unique mission becomes torn between following his orders and protecting the world he feels is his home.";
+    String movieTitle = info["title"];
+    String moviePoster = info["poster"];
+    String movieYear = info["year"];
+    List<String> movieGenre = info["genre"];
+    String movieDuration = info["duration"];
+    String imdbRating = info["imdb"];
+    String rottenRating = info["rt_rating"];
+    String movieDescription = info["description"]; 
     
     String strToDIsplay = "";
   
@@ -76,7 +76,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                       bottomRight: Radius.circular(8.0)
                     ),
                     child: Image.network(
-                        info["poster"],
+                        moviePoster,
                        // width: 300,
                         height: 200,
                         fit:BoxFit.fill
