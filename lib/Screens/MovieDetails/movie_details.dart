@@ -5,12 +5,13 @@ import 'package:moodie/Screens/navbar.dart';
 import '../Welcome/components/background.dart';
 
 class MovieDetails extends StatelessWidget {
-  const MovieDetails({Key? key}) : super(key: key);
+  const MovieDetails({Key? key, this.info}) : super(key: key);
+  final info;
   @override
   Widget build(BuildContext context) {
   return Scaffold(
     drawer: NavBar(),
-    body: YouTubePlayerFlutter()
+    body: YouTubePlayerFlutter(info: info)
   );
   }
 }

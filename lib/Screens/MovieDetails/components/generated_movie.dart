@@ -7,20 +7,22 @@ import 'video_player_widget.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YouTubePlayerFlutter extends StatefulWidget {
-  const YouTubePlayerFlutter({Key? key}) : super(key: key);
+  const YouTubePlayerFlutter({Key? key, this.info}) : super(key: key);
+  final info;
 
   @override
-  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState();
+  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState(info);
 }
 
 class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
-  final videoURL= "https://www.youtube.com/watch?v=5PSNL1qE6VY";
+  final info;
+  _YouTubePlayerFlutterState(this.info);
 
   late YoutubePlayerController _controller;
 
   @override
   void initState() {
-    final videoID = YoutubePlayer.convertUrlToId(videoURL);
+    final videoID = YoutubePlayer.convertUrlToId(info["trailer"]);
 
     _controller = new YoutubePlayerController(
       initialVideoId:  videoID!,
@@ -74,7 +76,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                       bottomRight: Radius.circular(8.0)
                     ),
                     child: Image.network(
-                        moviePoster,
+                        info["poster"],
                        // width: 300,
                         height: 200,
                         fit:BoxFit.fill

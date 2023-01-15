@@ -1,7 +1,12 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MovieDetails/movie_details.dart';
 
 import '../../Welcome/welcome_screen.dart';
+import '../../../constants.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // Multi Select widget
 // This widget is reusable
@@ -229,7 +234,23 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+  Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
+      String uri = '$server/movies/rand';
+      print(jsonEncode(_selectedItems));
+      final response = await http.post(Uri.parse(uri),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'filters': jsonEncode(_selectedItems)
+      }));
 
+      if(response.statusCode == 200){
+        print(jsonDecode(response.body));
+        return jsonDecode(response.body);
+      }else {
+        throw Exception('Failed fetching movie');
+      }
+    }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -401,15 +422,18 @@ class _HomePageState extends State<HomePage> {
             ],),
             SizedBox(height: 100),
           ElevatedButton(
-          onPressed: () {
-            Navigator.push(
+          onPressed: () async{
+            final jsonResponse= await fetchRequest();
+            if(jsonResponse.isNotEmpty){
+              Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return MovieDetails();
+                  return MovieDetails(info: jsonResponse);
                 },
               ),
             );
+            }
           },
           style: ElevatedButton.styleFrom(
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
