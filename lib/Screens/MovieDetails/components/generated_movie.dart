@@ -191,7 +191,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
-            "Great! I'll go see it.",
+            "Great! I'll go watch it.",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
         ),
