@@ -1,14 +1,16 @@
-from flask import current_app, jsonify
-from flask_pymongo.wrappers import MongoClient
-from flask_pymongo import PyMongo
+from flask import current_app, jsonify, g
+import pymongo
 from werkzeug.local import LocalProxy
 
 def get_db():
     """
     Configuration method to return db instance
     """
-    client = MongoClient(current_app.config.get("MONGO_URI", None))
-    db= client.msa
+    db = getattr(g, "_database", None)
+
+    if db is None:
+        db = g._database = pymongo.MongoClient(host=current_app.config.get("MONGO_URI", None)).msa
+       
     return db
 
 db = LocalProxy(get_db)
@@ -52,7 +54,7 @@ def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_
             "genre" : genre,
             "year" : int(year),
             "duration" : int(duration),
-            "rating" : (int(rt_rating)+float(imdb_rating)*10)/2,
+            "rating" : (float(rt_rating)/10+float(imdb_rating))/2,
             "description" : desc,
             "trailer" : trailer_link,
             "poster" : poster_link,
@@ -66,15 +68,15 @@ def aggregate_filters(filters):
     query={}
     
     if "genre" in filters:
-        genre=[filters["genre"]]
+        genre=filters["genre"]
         query["genre"] = { "$in": genre }
     
     if "year" in filters:
-        years=[filters["year"]]
+        years=filters["year"]
         query["year"] = { "$in": years }
     
     if "mood" in filters:
-        mood=[filters["moods"]]
+        mood=filters["moods"]
         query["mood"] = { "$in": mood }
     
     if "rating" in filters:
@@ -92,7 +94,6 @@ def aggregate_filters(filters):
         elif filters["duration"] == 'over 3 hours':
             query["duration"] = {"$gte": 180}
     
-    print(query)
     return db.movies.aggregate([
         { "$match": query },
         { "$sample": { "size": 1 } } 

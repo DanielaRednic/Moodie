@@ -149,7 +149,7 @@ def api_verify_user():
                      return jsonify({"return":True})
               else:
                      return jsonify({"error": "User or password incorrect",
-                            "return": False})
+                                   "return": False})
        
        return jsonify({"error": "User not found",
                             "return": False})
@@ -187,7 +187,6 @@ def add_movie_to_db():
 def api_get_random_movie():
        data = request.json      
        moods = [
-              'Anything',
               'Adventurous',
               'Angry',
               'Bored',
@@ -256,7 +255,7 @@ def api_get_random_movie():
                      break
        
        for key_rating in ratings:
-              if ratings[key_rating] in data["filters"]:
+              if key_rating in data["filters"]:
                      filters["rating"]= ratings[key_rating]
                      break
        
@@ -280,11 +279,26 @@ def api_get_random_movie():
        filters["moods"]= mood_list
        
        result = DB.get_random_movie(filters)
-       
-       for movie in result:
-              movie_id= movie['movie_id']
-       
-       return api_get_movie_by_id(int(movie_id)) 
+       if(result):
+              for movie in result:
+                     return jsonify(
+                     {
+                            "title": movie["name"],
+                            "genre": movie["genre"],
+                            "year": movie["year"],
+                            "duration": movie["duration"],
+                            "rating": movie["rating"],
+                            "description": movie["description"],
+                            "trailer": movie["trailer"],
+                            "poster": movie["poster"],
+                            "mood": movie["mood"]
+                     }
+                     )
+       else:
+              return jsonify({
+                     "error": "No movie found",
+                     "return": False
+              })
     
 @app.route('/rating', methods=["POST","PUT"])
 def add_rating():
@@ -301,7 +315,7 @@ def add_rating():
 #        user = request.form.get('user')
        
 #        return DB.update_rating(rating, movie_id, user)
-  
+
 if __name__ == '__main__':
    app.config['DEBUG'] = True
    app.config['MONGO_URI'] = config['PROD']['DB_URI']
