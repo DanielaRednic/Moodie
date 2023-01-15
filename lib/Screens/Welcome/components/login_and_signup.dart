@@ -28,7 +28,7 @@ class LoginAndSignupBtn extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
             child: Text(
               "Login".toUpperCase(),
@@ -49,7 +49,7 @@ class LoginAndSignupBtn extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "Sign Up".toUpperCase(),
@@ -69,7 +69,7 @@ class LoginAndSignupBtn extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "Movie Picker".toUpperCase(),

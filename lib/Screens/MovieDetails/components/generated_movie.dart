@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moodie/Screens/UserPage/user_page.dart';
 
 import '../../../constants.dart';
-import 'video_player_widget.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class YouTubePlayerFlutter extends StatefulWidget {
@@ -37,17 +36,17 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
   Widget build(BuildContext context) {
     String movieTitle = info["title"];
     String moviePoster = info["poster"];
-    String movieYear = info["year"];
-    List<String> movieGenre = info["genre"];
-    String movieDuration = info["duration"];
-    String imdbRating = info["imdb"];
-    String rottenRating = info["rt_rating"];
+    String movieYear = info["year"].toString();
+    List<dynamic> movieGenre = info["genre"];
+    String movieDuration = info["duration"].toString();
+    String imdbRating = info["imdb"].toString();
+    String rottenRating = info["rt_rating"].toString();
     String movieDescription = info["description"]; 
     
     String strToDIsplay = "";
   
     for(var genre in movieGenre) {
-      strToDIsplay += "$genre ";
+      strToDIsplay += "${genre[0].toUpperCase()}${genre.substring(1)} ";
     }
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -107,7 +106,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                   Text("Genre: "+strToDIsplay, style: TextStyle(color: Colors.white, fontSize: 18.0), softWrap: true),
                   SizedBox(height: 10),
                   Text("iMDB: "+imdbRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
-                  Text("Rotten Tomatoes: "+imdbRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
+                  Text("Rotten Tomatoes: "+rottenRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
                 ],
               ),
             ),
@@ -190,7 +189,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "Great! I'll go watch it.",
@@ -202,7 +201,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "I have already seen it",
@@ -214,7 +213,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "I want a different movie",

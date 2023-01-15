@@ -282,7 +282,7 @@ class _HomePageState extends State<HomePage> {
                 Color.fromARGB(255 ,255, 153, 1),
               ],
             ),
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(25),
             boxShadow: <BoxShadow>[
               BoxShadow(
                 color: Color.fromRGBO(0, 0, 0, 0.57),
@@ -294,6 +294,7 @@ class _HomePageState extends State<HomePage> {
                 primary: Colors.transparent,
                 onSurface: Colors.transparent,
                 shadowColor: Colors.transparent,
+                elevation: 20
             ),
               onPressed: _showMultiSelectMood,
               child: const Text('Mood',style: TextStyle(fontSize: 20.0)),
@@ -322,6 +323,7 @@ class _HomePageState extends State<HomePage> {
                 primary: Colors.transparent,
                 onSurface: Colors.transparent,
                 shadowColor: Colors.transparent,
+                elevation: 20
             ),
               onPressed: _showMultiSelectGenre,
               child: const Text('Genre',style: TextStyle(fontSize: 20.0)),
@@ -350,6 +352,7 @@ class _HomePageState extends State<HomePage> {
                 primary: Colors.transparent,
                 onSurface: Colors.transparent,
                 shadowColor: Colors.transparent,
+                elevation: 20
             ),
               onPressed: _showMultiSelectGrade,
               child: const Text('Min. grade',style: TextStyle(fontSize: 20.0)),
@@ -386,6 +389,7 @@ class _HomePageState extends State<HomePage> {
                 primary: Colors.transparent,
                 onSurface: Colors.transparent,
                 shadowColor: Colors.transparent,
+                elevation: 20
             ),
               onPressed: _showMultiSelectLength,
               child: const Text('Length',style: TextStyle(fontSize: 20.0)),
@@ -414,6 +418,7 @@ class _HomePageState extends State<HomePage> {
                 primary: Colors.transparent,
                 onSurface: Colors.transparent,
                 shadowColor: Colors.transparent,
+                elevation: 20
             ),
               onPressed: _showMultiSelectYear,
               child: const Text('Year',style: TextStyle(fontSize: 20.0)),
@@ -436,30 +441,34 @@ class _HomePageState extends State<HomePage> {
             }
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
             "Pick my movie!",
-            style: TextStyle(color: Colors.white, fontSize: 16.0),
+            style: TextStyle(color: Colors.white, fontSize: 18.0),
           ),
         ),
+        SizedBox(height: 10),
         ElevatedButton(
-          onPressed: () {
+          onPressed: () async{
+            final jsonResponse= await fetchRequest();
+            if(jsonResponse.isNotEmpty){
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return WelcomeScreen();
+                  return MovieDetails(info: jsonResponse);
                 },
               ),
             );
+            }
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
-            "Home".toUpperCase(),
-            style: TextStyle(color: Colors.white),
+            "Anything goes!",
+            style: TextStyle(color: Colors.white, fontSize: 18.0),
           ),
         ),
           ],
