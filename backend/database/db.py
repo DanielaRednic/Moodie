@@ -1,14 +1,16 @@
-from flask import current_app, jsonify
-from flask_pymongo.wrappers import MongoClient
-from flask_pymongo import PyMongo
+from flask import current_app, jsonify, g
+import pymongo
 from werkzeug.local import LocalProxy
 
 def get_db():
     """
     Configuration method to return db instance
     """
-    client = MongoClient(current_app.config.get("MONGO_URI", None))
-    db= client.msa
+    db = getattr(g, "_database", None)
+
+    if db is None:
+        db = g._database = pymongo.MongoClient(host=current_app.config.get("MONGO_URI", None)).msa
+       
     return db
 
 db = LocalProxy(get_db)
@@ -31,6 +33,20 @@ def search_user(username=None, email = None):
             {"email":email}
         ]}
         return db.users.find_one(query,{"username":1,"password":1})
+    
+def get_details(userOrmail):
+    query = { "$or":[
+            {"username":userOrmail},
+            {"email":userOrmail}
+        ]}
+    
+    return db.users.find_one(query,{"username":1,"email":1})
+
+def get_email(username):
+    return db.users.find_one({"username": username},{"email":1})
+
+def get_user_movies(username):
+    return db.users.find_one({"username": username},{"movies":1})   
 
 def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
     movie = { "movie_id" : db.movies.count_documents({})+1,
@@ -38,7 +54,7 @@ def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_
             "genre" : genre,
             "year" : int(year),
             "duration" : int(duration),
-            "rating" : (int(rt_rating)+float(imdb_rating)*10)/2,
+            "rating" : (float(rt_rating)/10+float(imdb_rating))/2,
             "description" : desc,
             "trailer" : trailer_link,
             "poster" : poster_link,
@@ -52,20 +68,32 @@ def aggregate_filters(filters):
     query={}
     
     if "genre" in filters:
-        genre=[filters["genre"]]
+        genre=filters["genre"]
         query["genre"] = { "$in": genre }
     
     if "year" in filters:
-        query["year"] = filters["year"]
+        years=filters["year"]
+        query["year"] = { "$in": years }
     
     if "mood" in filters:
-        mood=[filters["moods"]]
+        mood=filters["moods"]
         query["mood"] = { "$in": mood }
     
     if "rating" in filters:
         query["rating"] = { "$gte": filters["rating"] }
     
-    print(query)
+    if "duration" in filters:
+        if filters["duration"] == 'under 1.5 hours':
+            query["duration"] = { "$lt": 90 }
+        elif filters["duration"] == '1.5-2 hours':
+            query["duration"] = {"$gte": 90, "lt": 120}
+        elif filters["duration"] == 'over 2 hours':
+            query["duration"] = {"$gte": 120}
+        elif filters["duration"] == '2-3 hours':
+            query["duration"] = {"$gte": 120, "lt": 180}
+        elif filters["duration"] == 'over 3 hours':
+            query["duration"] = {"$gte": 180}
+    
     return db.movies.aggregate([
         { "$match": query },
         { "$sample": { "size": 1 } } 
