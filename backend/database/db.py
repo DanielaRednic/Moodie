@@ -75,7 +75,7 @@ def aggregate_filters(filters):
         years=filters["year"]
         query["year"] = { "$in": years }
     
-    if "mood" in filters:
+    if "moods" in filters:
         mood=filters["moods"]
         query["mood"] = { "$in": mood }
     
@@ -94,6 +94,7 @@ def aggregate_filters(filters):
         elif filters["duration"] == 'over 3 hours':
             query["duration"] = {"$gte": 180}
     
+    print(query)
     return db.movies.aggregate([
         { "$match": query },
         { "$sample": { "size": 1 } } 
