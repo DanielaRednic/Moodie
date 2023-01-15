@@ -37,7 +37,7 @@ def get_duration_string(duration):
        hours = duration//60
        minutes = duration%60
        
-       time_string= "{}h:{}m".format(hours,minutes)
+       time_string= "{}h {}m".format(hours,minutes)
        print(time_string)
        return time_string
 
@@ -157,7 +157,7 @@ def api_verify_user():
               if(user['password'] == passw):
                      return jsonify({"return":True})
               else:
-                     return jsonify({"error": "User or password incorrect",
+                     return jsonify({"error": "Password is incorrect",
                                    "return": False})
        
        return jsonify({"error": "User not found",
@@ -290,13 +290,19 @@ def api_get_random_movie():
               if mood in data_list:
                      mood_list.append(str.lower(mood))
        
-       filters['genre']= genre_list
-       filters['year']= year_list
-       filters["moods"]= mood_list
+       if len(genre_list) != 0:
+              filters['genre']= genre_list
+       
+       if len(year_list) != 0:
+              filters['year']= year_list
+       
+       if len(mood_list) != 0:
+              filters["moods"]= mood_list
        
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:
+                     print(movie["rotten"],movie["imdb"])
                      return jsonify(
                      {
                             "title": movie["name"],
@@ -307,7 +313,9 @@ def api_get_random_movie():
                             "description": movie["description"],
                             "trailer": movie["trailer"],
                             "poster": movie["poster"],
-                            "mood": movie["mood"]
+                            "mood": movie["mood"],
+                            "rt_rating": movie["rotten"],
+                            "imdb": movie["imdb"]
                      }
                      )
        else:
