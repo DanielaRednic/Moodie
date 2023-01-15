@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MoviePicker/components/buttons.dart';
-import 'package:moodie/Screens/MoviePicker/components/picker_buttons.dart';
 import 'package:moodie/Screens/MoviePicker/components/buttons.dart';
 import 'package:moodie/Screens/navbar.dart';
 
