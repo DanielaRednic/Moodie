@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/Screens/MovieDetails/movie_details.dart';
+
+import '../../Welcome/welcome_screen.dart';
 
 // Multi Select widget
 // This widget is reusable
+int maximumChoices = 15;
 class MultiSelect extends StatefulWidget {
   final List<String> items;
   const MultiSelect({Key? key, required this.items}) : super(key: key);
@@ -18,7 +22,28 @@ class _MultiSelectState extends State<MultiSelect> {
   void _itemChange(String itemValue, bool isSelected) {
     setState(() {
       if (isSelected) {
-        _selectedItems.add(itemValue);
+        if(_selectedItems.length< maximumChoices) {
+          _selectedItems.add(itemValue);
+        }
+        else
+        {
+          showDialog(context: context, builder: (context) =>
+          AlertDialog(
+            title: Text('Oops!'),
+            content: Text('You can only select up to 15 elements!'),
+          actions:[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.pop(context)
+            ),
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () => Navigator.pop(context)
+            ),
+            ],
+          ),
+          );
+        }
       } else {
         _selectedItems.remove(itemValue);
       }
@@ -80,19 +105,8 @@ class _HomePageState extends State<HomePage> {
     // a list of selectable items
     // these items can be hard-coded or dynamically fetched from a database/API
     final List<String> mood = [
-    'Anything',
-    'Adventurous',
-    'Angry',
-    'Bored',
-    'Curious',
-    'Depressed',
-    'Evil',
-    'Happy',
-    'Mysterious',
-    'Playful',
-    'Romantic',
-    'Sad'
-    ];
+    'Anything','Adventurous','Angry','Bored', 'Curious', 'Depressed',
+    'Evil', 'Happy', 'Mysterious', 'Playful', 'Romantic', 'Sad'];
 
     final List<String>? results = await showDialog(
       context: context,
@@ -115,15 +129,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
   void _showMultiSelectLength() async {
-    // a list of selectable items
-    // these items can be hard-coded or dynamically fetched from a database/API
+    // a list of selectable movie lengths
     final List<String> time = [
-    'over 3 hours',
-    '2-3 hours',
-    'over 2 hours',
-    '1.5-2 hours',
-    'under 1.5 hours'
-    ];
+    'over 3 hours', '2-3 hours', 'over 2 hours', '1.5-2 hours', 'under 1.5 hours'];
 
     final List<String>? results = await showDialog(
       context: context,
@@ -132,27 +140,23 @@ class _HomePageState extends State<HomePage> {
       },
     
     );
+    if (results != null) {
+      setState(() {
+        for(String itr in results) {
+          if(!_selectedItems.contains(itr))
+          {
+            _selectedItems.add(itr);
+          }
+        }
+      });
+    }
   }
 
     void _showMultiSelectGenre() async {
-    // a list of selectable items
-    // these items can be hard-coded or dynamically fetched from a database/API
+    // a list of selectable genres
     final List<String> genre = [
-    'Anything',
-    'Action',
-    'Adventure',
-    'Animation',
-    'Comedy',
-    'Documentary',
-    'Drama',
-    'Fantasy',
-    'Horror',
-    'Mystery',
-    'Romantic',
-    'Sci-Fi',
-    'Superhero',
-    'Thriller',
-    ];
+    'Anything', 'Action', 'Adventure', 'Animation', 'Comedy', 'Documentary', 'Drama', 'Fantasy', 'Horror',
+    'Mystery', 'Romantic', 'Sci-Fi', 'Superhero', 'Thriller',];
 
     final List<String>? results = await showDialog(
       context: context,
@@ -176,21 +180,7 @@ class _HomePageState extends State<HomePage> {
   }
   void _showMultiSelectGrade() async {
     final List<String> grade = [
-    '10',
-    '9.5',
-    '9',
-    '8.5',
-    '8',
-    '7.5',
-    '7',
-    '6.5',
-    '6',
-    '5.5',
-    '5',
-    '4.5',
-    '4',
-    'Less than 4',
-    ];
+    '10','9.5','9','8.5','8','7.5','7','6.5','6','5.5','5','4.5','4','Less than 4',];
 
     final List<String>? results = await showDialog(
       context: context,
@@ -246,22 +236,22 @@ class _HomePageState extends State<HomePage> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          //mainAxisAlignment: MainAxisAlignment.center,
+          //crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Divider(
-              height: 30,
-            ),
-            // display selected items
-            Wrap(
-              children: _selectedItems
+              SizedBox(height: 100),
+               Wrap(
+                spacing: 10,
+                children: _selectedItems
                   .map((e) => Chip(
                         label: Text(e),
                       ))
                   .toList(),
-            ),
-            // use this button to open the multi-select dialog
-            DecoratedBox(
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
               begin: Alignment.topRight,
@@ -285,12 +275,10 @@ class _HomePageState extends State<HomePage> {
                 shadowColor: Colors.transparent,
             ),
               onPressed: _showMultiSelectMood,
-              child: const Text('Mood'),
+              child: const Text('Mood',style: TextStyle(fontSize: 20.0)),
             ),
             ),
-            const Divider(
-              height: 10,
-            ),
+            SizedBox(width: 25),
             DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -315,12 +303,10 @@ class _HomePageState extends State<HomePage> {
                 shadowColor: Colors.transparent,
             ),
               onPressed: _showMultiSelectGenre,
-              child: const Text('Genre'),
+              child: const Text('Genre',style: TextStyle(fontSize: 20.0)),
             ),
             ),
-            const Divider(
-              height: 10,
-            ),
+            SizedBox(width: 25),
             DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -345,10 +331,16 @@ class _HomePageState extends State<HomePage> {
                 shadowColor: Colors.transparent,
             ),
               onPressed: _showMultiSelectGrade,
-              child: const Text('Min. grade'),
+              child: const Text('Min. grade',style: TextStyle(fontSize: 20.0)),
             ),
             ),
-            const Divider(
+              ],
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+              const Divider(
               height: 10,
             ),
             DecoratedBox(
@@ -375,12 +367,10 @@ class _HomePageState extends State<HomePage> {
                 shadowColor: Colors.transparent,
             ),
               onPressed: _showMultiSelectLength,
-              child: const Text('Length'),
+              child: const Text('Length',style: TextStyle(fontSize: 20.0)),
             ),
             ),
-            const Divider(
-              height: 10,
-            ),
+            SizedBox(width: 25),
             DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -405,9 +395,49 @@ class _HomePageState extends State<HomePage> {
                 shadowColor: Colors.transparent,
             ),
               onPressed: _showMultiSelectYear,
-              child: const Text('Year'),
+              child: const Text('Year',style: TextStyle(fontSize: 20.0)),
             ),
             ),
+            ],),
+            SizedBox(height: 100),
+          ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return MovieDetails();
+                },
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
+          child: Text(
+            "Pick my movie!",
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return WelcomeScreen();
+                },
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
+          child: Text(
+            "Home".toUpperCase(),
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
           ],
         ),
       ),

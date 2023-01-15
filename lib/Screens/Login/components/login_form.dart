@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:moodie/Screens/MoviePicker/movie_picker.dart';
 import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../../../constants.dart';
@@ -62,8 +63,38 @@ class LoginForm extends StatelessWidget {
           PasswordTextField(controller: passwordController),
           const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
-            onPressed: () {
-              fetchRequest();
+            onPressed: () async {
+              final jsonResponse= await fetchRequest();
+              if(jsonResponse.containsKey("error")==false)
+              {
+                Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return MoviePicker();
+                },
+              ),
+            );
+              }
+              else
+        {
+          showDialog(context: context, builder: (context) =>
+          AlertDialog(
+            title: Text('Oops!'),
+            content: Text("Username or password is incorrect!"),
+          actions:[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () => Navigator.pop(context)
+            ),
+            TextButton(
+              child: Text('Ok'),
+              onPressed: () => Navigator.pop(context)
+            ),
+            ],
+          ),
+          );
+        }
             },
             style: ElevatedButton.styleFrom(
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
@@ -89,20 +120,7 @@ class LoginForm extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
         ),
-          const SizedBox(height: defaultPadding),
-          // AlreadyHaveAnAccountCheck(
-          //   login: false,
-          //   press: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) {
-          //           return LoginScreen();
-          //         },
-          //       ),
-          //     );
-          //   },
-          // ),
+          const SizedBox(height: defaultPadding)
         ],
       ),
     );
