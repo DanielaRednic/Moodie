@@ -82,13 +82,43 @@ class SignUpForm extends StatelessWidget {
           ConfirmPasswordTextField(controller: confirmPasswordController),
           const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
-            onPressed: () {
-              makeRequest();
+            onPressed: () async{
+              final jsonResponse= await makeRequest();
+              if(jsonResponse.containsKey("error")==false)
+              {
+                showDialog(context: context, builder: (context) =>
+                AlertDialog(
+                  title: Text('Great!'),
+                  content: Text('Account created succesfully!'),
+                actions:[
+                  TextButton(
+                        child: Text('Ok'),
+                        onPressed: () => Navigator.pop(context)
+                      ),
+                    ],
+                  ),
+                );
+              }
+              else
+              {
+                showDialog(context: context, builder: (context) =>
+                AlertDialog(
+                  title: Text('Oops!'),
+                  content: Text(jsonResponse["error"]),
+                actions:[
+                  TextButton(
+                        child: Text('Ok'),
+                        onPressed: () => Navigator.pop(context)
+                      ),
+                    ],
+                  ),
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-            child: Text("Sign Up".toUpperCase()),
+            child: Text("Sign Up"),
           ),
           ElevatedButton(
           onPressed: () {
@@ -102,27 +132,14 @@ class SignUpForm extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
-            "Home".toUpperCase(),
+            "Home",
             style: TextStyle(color: Colors.white),
           ),
         ),
           const SizedBox(height: defaultPadding),
-          // AlreadyHaveAnAccountCheck(
-          //   login: false,
-          //   press: () {
-          //     Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) {
-          //           return LoginScreen();
-          //         },
-          //       ),
-          //     );
-          //   },
-          // ),
         ],
       ),
     );

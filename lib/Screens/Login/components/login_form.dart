@@ -81,7 +81,7 @@ class LoginForm extends StatelessWidget {
           showDialog(context: context, builder: (context) =>
           AlertDialog(
             title: Text('Oops!'),
-            content: Text("Username or password is incorrect!"),
+            content: Text(jsonResponse["error"]),
           actions:[
             TextButton(
               child: Text('Cancel'),
@@ -97,9 +97,9 @@ class LoginForm extends StatelessWidget {
         }
             },
             style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-            child: Text("Log In".toUpperCase()),
+            child: Text("Log In"),
           ),
           ElevatedButton(
           onPressed: () {
@@ -113,10 +113,10 @@ class LoginForm extends StatelessWidget {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 0, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
+              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
           child: Text(
-            "Home".toUpperCase(),
+            "Home",
             style: TextStyle(color: Colors.white),
           ),
         ),
