@@ -37,7 +37,7 @@ def get_duration_string(duration):
        hours = duration//60
        minutes = duration%60
        
-       time_string= "{}h:{}m".format(hours,minutes)
+       time_string= "{}h {}m".format(hours,minutes)
        print(time_string)
        return time_string
 
