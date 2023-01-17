@@ -189,7 +189,7 @@ class _MovieListState extends State<MovieList> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SeeDetails(info: jsonResponse);
+                  return SeeDetails(info: _movies![index]["id"]);
                 },
               ),
             );
@@ -202,6 +202,7 @@ class _MovieListState extends State<MovieList> {
             ],
             )
             ),
+            Divider(),
             ],
             );
       },
