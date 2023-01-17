@@ -59,6 +59,7 @@ def api_get_movie_by_id(given_id=None):
        for movie in result:
               return jsonify(
               {
+                     "id": movie["movie_id"],
                      "title": movie["name"],
                      "genre": movie["genre"],
                      "year": movie["year"],
@@ -109,10 +110,31 @@ def api_get_user_movies():
        user = request.args.get('user')
        
        result = DB.get_user_movies(user)
-       
        if(result):
+              list_ids=[]
+              dict_movies_user={}
+              for info in result["movies"]:
+                     list_ids.append(info["movie_id"])
+                     if(info["rating"]== -1):
+                            info["rating"]= "N/A"
+                     dict_movies_user[info["movie_id"]]=info["rating"]
+              
+              resulted_movies= DB.get_list_movies(list_ids)
+
+              final_list=[]
+              for movie in resulted_movies:
+                     print(movie)
+                     print(dict_movies_user.get(movie["movie_id"]))
+                     final_list.append(dict([
+                            ("year",movie["year"]),
+                            ("poster",movie["poster"]),
+                            ("name",movie["name"]),
+                            ("rating",dict_movies_user.get(movie["movie_id"])),
+                            ("id",movie["movie_id"])
+                     ]))
+              print(final_list)
               return jsonify({
-                     "movies":result["movies"],
+                     "movies":final_list,
                      "return": True
               })
        
@@ -157,7 +179,7 @@ def api_verify_user():
               if(user['password'] == passw):
                      return jsonify({"return":True})
               else:
-                     return jsonify({"error": "User or password incorrect",
+                     return jsonify({"error": "Password is incorrect",
                                    "return": False})
        
        return jsonify({"error": "User not found",
@@ -165,15 +187,17 @@ def api_verify_user():
 
 @app.route('/user/movie/add', methods=["POST"])
 def api_add_movie_to_user():
-       id = request.form.get('id')
-       user = request.form.get('user')
+       data= request.json
+       id = data['id']
+       user = data['user']
        
        return DB.add_movie_to_user(int(id),user)
        
 @app.route('/user/movie/delete', methods=["DELETE"])
 def api_remove_movie_from_user():
-       id = request.form.get('id')
-       user = request.form.get('user')
+       data= request.json
+       id = data['id']
+       user = data['user']
        
        return DB.remove_movie_from_user(int(id),user)
 
@@ -290,13 +314,19 @@ def api_get_random_movie():
               if mood in data_list:
                      mood_list.append(str.lower(mood))
        
-       filters['genre']= genre_list
-       filters['year']= year_list
-       filters["moods"]= mood_list
+       if len(genre_list) != 0:
+              filters['genre']= genre_list
+       
+       if len(year_list) != 0:
+              filters['year']= year_list
+       
+       if len(mood_list) != 0:
+              filters["moods"]= mood_list
        
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:
+                     print(movie["rotten"],movie["imdb"])
                      return jsonify(
                      {
                             "title": movie["name"],
@@ -307,7 +337,9 @@ def api_get_random_movie():
                             "description": movie["description"],
                             "trailer": movie["trailer"],
                             "poster": movie["poster"],
-                            "mood": movie["mood"]
+                            "mood": movie["mood"],
+                            "rt_rating": movie["rotten"],
+                            "imdb": movie["imdb"]
                      }
                      )
        else:
@@ -319,10 +351,11 @@ def api_get_random_movie():
 @app.route('/rating', methods=["POST","PUT"])
 def add_rating():
        rating = request.args.get("value")
-       movie_id = request.form.get('id')
-       user = request.form.get('user')
+       data= request.json
+       movie_id = data['id']
+       user = data['user']
        
-       return DB.update_rating(rating, int(movie_id), user)
+       return DB.update_rating(int(rating), int(movie_id), user)
 
 # @app.route('/rating', methods=["PUT"])
 # def update_rating():

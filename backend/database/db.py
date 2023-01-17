@@ -46,7 +46,14 @@ def get_email(username):
     return db.users.find_one({"username": username},{"email":1})
 
 def get_user_movies(username):
-    return db.users.find_one({"username": username},{"movies":1})   
+    return db.users.find_one({"username": username},{"movies":1})
+
+def get_list_movies(ids):
+    query={}
+    
+    query["movie_id"]= { "$in": ids }
+    print(query)
+    return db.movies.find(query,{"poster": 1,"year":1,"name":1,"movie_id":1})
 
 def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_link,poster_link):
     movie = { "movie_id" : db.movies.count_documents({})+1,
