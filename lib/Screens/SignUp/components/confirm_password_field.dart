@@ -15,6 +15,7 @@ class _ConfirmPasswordTextFieldState extends State<ConfirmPasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      maxLength: 35,
       controller: widget.controller,
       textInputAction: TextInputAction.done,
       cursorColor: kPrimaryColor,

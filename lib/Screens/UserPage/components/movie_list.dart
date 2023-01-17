@@ -1,7 +1,6 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:moodie/Screens/navbar.dart';
 
 import '../../../constants.dart';
 import 'package:http/http.dart' as http;
@@ -10,15 +9,17 @@ import 'dart:convert';
 import '../../../user_details.dart';
 
 class MovieList extends StatefulWidget {
+  const MovieList({super.key});
+
   @override
   _MovieListState createState() => _MovieListState();
 }
 
 class _MovieListState extends State<MovieList> {
   List<dynamic>? _movies;
-  String _selectedRating= "N/A";
 
   Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
       String uri = '$server/user/get/movies?user=$user';
       final response = await http.get(Uri.parse(uri));
 
@@ -30,8 +31,9 @@ class _MovieListState extends State<MovieList> {
     }
 
   void updateRating(String id,String value) async {
+    final user = await UserSecureStorage.getUsername() ?? "Guest";
     String uri = '$server/rating?value=$value';
-      final response = await http.post(Uri.parse(uri),headers: <String, String>{
+    final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
@@ -61,10 +63,10 @@ class _MovieListState extends State<MovieList> {
   @override
   Widget build(BuildContext context) {
     if (_movies == null) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
     if (_movies!.isEmpty) {
-      return Center(child: Text("No movies yet :("));
+      return const Center(child: Text("No movies yet :("));
     }
     return ListView.builder(
       itemCount: _movies?.length,

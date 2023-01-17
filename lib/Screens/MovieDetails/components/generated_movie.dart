@@ -58,7 +58,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           Column(
             children:
             [
-            Card(
+            const Card(
               elevation: 20,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))),
               InkWell(
@@ -68,7 +68,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                 crossAxisAlignment: CrossAxisAlignment.center,  // add this
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0),
                       bottomLeft: Radius.circular(8.0),
@@ -189,9 +189,9 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "Great! I'll go watch it.",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
@@ -201,9 +201,9 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "I have already seen it",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
@@ -213,9 +213,9 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "I want a different movie",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
