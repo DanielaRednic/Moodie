@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MoviePicker/movie_picker.dart';
+import 'package:moodie/user_details.dart';
 
 import '../../Login/login.dart';
 import '../../SignUp/signup.dart';
@@ -14,6 +15,7 @@ class LoginAndSignupBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if(UserSecureStorage.getLoggedIn() != true)
         Hero(
           tag: "login_btn",
           child: ElevatedButton(
@@ -37,6 +39,7 @@ class LoginAndSignupBtn extends StatelessWidget {
           ),
        ),
         const SizedBox(height: 16),
+        if(UserSecureStorage.getLoggedIn() != true)
         ElevatedButton(
           onPressed: () {
             Navigator.push(

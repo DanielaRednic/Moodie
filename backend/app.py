@@ -31,8 +31,8 @@ def password_check(password):
        return val
 
 def get_duration_string(duration):
-       hours = duration//60
-       minutes = duration%60
+       hours = int(duration)//60
+       minutes = int(duration)%60
        
        time_string= "{}h {}m".format(hours,minutes)
        print(time_string)
@@ -200,22 +200,40 @@ def api_remove_movie_from_user():
 
 @app.route('/movies/add', methods=["POST"])
 def add_movie_to_db():
-       name = request.form.get('name')
-       genre = request.form.getlist('genre')
-       year = request.form.get('year')
-       duration = request.form.get('duration')
-       moods = request.form.getlist('moods')
-       rt_rating = request.form.get('rt_rating')
-       imdb_rating = request.form.get('imdb_rating')
-       desc = request.form.get('desc')
-       trailer_link = request.form.get('trailer_link')
-       poster_link = request.form.get('poster_link')
+       data = request.json
        
-       return DB.add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
+       return DB.add_movie(data["name"].capwords(),[x.lower() for x in data["genre"]],data["year"],data["duration"],[x.lower() for x in data["moods"]],data["rt_rating"],data["imdb_rating"], data["desc"],data["trailer_link"],data["poster_link"])
 
 @app.route('/movies/rand', methods=["GET","POST"])
 def api_get_random_movie():
        data = request.json
+       print(data["anything"])
+       if(data["anything"] == "true"):
+              filters={}
+              result = DB.get_random_movie(filters)
+              if(result):
+                     for movie in result:
+                            return jsonify(
+                            {
+                                   "movie_id":movie["movie_id"],
+                                   "title": movie["name"],
+                                   "genre": movie["genre"],
+                                   "year": movie["year"],
+                                   "duration": get_duration_string(movie["duration"]),
+                                   "rating": movie["rating"],
+                                   "description": movie["description"],
+                                   "trailer": movie["trailer"],
+                                   "poster": movie["poster"],
+                                   "mood": movie["mood"],
+                                   "rt_rating": movie["rotten"],
+                                   "imdb": movie["imdb"]
+                            }
+                            )
+              return jsonify({
+                     "error": "No movie found",
+                     "return": False
+              })
+              
        data_list= list(data["filters"][1:-1].split(","))
        
        for i in range(len(data_list)):
@@ -341,7 +359,8 @@ def api_get_random_movie():
                             "poster": movie["poster"],
                             "mood": movie["mood"],
                             "rt_rating": movie["rotten"],
-                            "imdb": movie["imdb"]
+                            "imdb": movie["imdb"],
+                            "return": True
                      }
                      )
        return jsonify({

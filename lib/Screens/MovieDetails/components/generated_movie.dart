@@ -13,18 +13,20 @@ import '../../../user_details.dart';
 import 'package:http/http.dart' as http;
 
 class YouTubePlayerFlutter extends StatefulWidget {
-  const YouTubePlayerFlutter({Key? key, this.info,this.selecteditems}) : super(key: key);
+  const YouTubePlayerFlutter({Key? key, this.info,this.selecteditems, this.ids_list}) : super(key: key);
   final info;
   final selecteditems;
+  final ids_list;
 
   @override
-  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState(info,selecteditems);
+  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState(info,selecteditems,ids_list);
 }
 
 class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
   final info;
   final selectedItems;
-  _YouTubePlayerFlutterState(this.info,this.selectedItems);
+  List<String> ids_list;
+  _YouTubePlayerFlutterState(this.info,this.selectedItems,this.ids_list);
 
   late YoutubePlayerController _controller;
 
@@ -233,6 +235,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
               children: [
                 ElevatedButton(
               onPressed: () {
+              ids_list=[];
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -259,9 +262,10 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             setState(() {
               isLoading = false;
             });
+            ids_list.add(info["movie_id"].toString());
             Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
-                        return MovieDetails(info:response,selecteditems: selectedItems);
+                        return MovieDetails(info:response,selecteditems: selectedItems,ids_list: []);
                       },
                     )
                   );
@@ -279,13 +283,14 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             setState(() {
               isLoading = true;
             });
+            ids_list.add(info["movie_id"].toString());
             final response = await fetchNewMovieRequest(false);
             setState(() {
               isLoading = false;
             });
             Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
-                        return MovieDetails(info:response,selecteditems: selectedItems);
+                        return MovieDetails(info:response,selecteditems: selectedItems,ids_list: ids_list);
                       },
                     )
                   );

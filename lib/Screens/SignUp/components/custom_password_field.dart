@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../constants.dart';
 
@@ -15,6 +16,7 @@ class _PasswordTextFieldState extends State<PasswordTextField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[^ ]+"))],
       maxLength: 35,
       controller: widget.controller,
       textInputAction: TextInputAction.done,

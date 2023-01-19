@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MovieDetails/movie_details.dart';
 import 'package:moodie/user_details.dart';
 
-import '../../Welcome/welcome_screen.dart';
 import '../../../constants.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,19 +13,31 @@ import 'dart:convert';
 int maximumChoices = 15;
 class MultiSelect extends StatefulWidget {
   final List<String> items;
-  const MultiSelect({Key? key, required this.items}) : super(key: key);
-
+  final List<String> alreadySelectedItems;
+  final bool singleChoice;
+  const MultiSelect({Key? key, required this.items,required this.alreadySelectedItems,required this.singleChoice}) : super(key: key);
+  
   @override
-  State<StatefulWidget> createState() => _MultiSelectState();
+  State<StatefulWidget> createState() => _MultiSelectState(alreadySelectedItems,singleChoice);
 }
 
 class _MultiSelectState extends State<MultiSelect> {
+  bool singleChoice;
+  List<String> alreadySelectedItems;
+  _MultiSelectState(this.alreadySelectedItems,this.singleChoice);
   // this variable holds the selected items
-  final List<String> _selectedItems = [];
+  List<String> _selectedItems = [];
   bool isLoading = false;
 // This function is triggered when a checkbox is checked or unchecked
-  void _itemChange(String itemValue, bool isSelected) {
+  void _itemChange(String itemValue, bool isSelected, bool singleChoice) {
     setState(() {
+      if(singleChoice){
+        for(int index = 0;index < widget.items.length;index++){
+          if(widget.items[index]!= itemValue){
+            _selectedItems.remove(widget.items[index]);
+          }
+        }
+      }
       if (isSelected) {
         if(_selectedItems.length< maximumChoices) {
           _selectedItems.add(itemValue);
@@ -52,6 +63,7 @@ class _MultiSelectState extends State<MultiSelect> {
         }
       } else {
         _selectedItems.remove(itemValue);
+        alreadySelectedItems.remove(itemValue);
       }
     });
   }
@@ -71,6 +83,7 @@ class _MultiSelectState extends State<MultiSelect> {
     if (isLoading == true){
       return const Center(child: CircularProgressIndicator());
     }
+    _selectedItems.addAll(alreadySelectedItems.where((element) => _selectedItems.contains(element) == false));
     return AlertDialog(
       title: const Text('Select your choices'),
       content: SingleChildScrollView(
@@ -80,7 +93,7 @@ class _MultiSelectState extends State<MultiSelect> {
                     value: _selectedItems.contains(item),
                     title: Text(item),
                     controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (isChecked) => _itemChange(item, isChecked!),
+                    onChanged: (isChecked) => _itemChange(item, isChecked!,singleChoice),
                   ))
               .toList(),
         ),
@@ -120,7 +133,7 @@ class _HomePageState extends State<HomePage> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: mood);
+        return MultiSelect(items: mood,alreadySelectedItems: _selectedItems,singleChoice: false);
       },
     
     );
@@ -145,7 +158,7 @@ class _HomePageState extends State<HomePage> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: time);
+        return MultiSelect(items: time,alreadySelectedItems: _selectedItems,singleChoice: false);
       },
     
     );
@@ -170,7 +183,7 @@ class _HomePageState extends State<HomePage> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: genre);
+        return MultiSelect(items: genre,alreadySelectedItems: _selectedItems,singleChoice: false);
       },
     
     );
@@ -194,7 +207,7 @@ class _HomePageState extends State<HomePage> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: grade);
+        return MultiSelect(items: grade,alreadySelectedItems: _selectedItems,singleChoice: true);
       },
     );
 
@@ -219,7 +232,7 @@ class _HomePageState extends State<HomePage> {
     final List<String>? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
-        return MultiSelect(items: year);
+        return MultiSelect(items: year,alreadySelectedItems: _selectedItems,singleChoice: false);
       },
     );
 
@@ -235,9 +248,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-  Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
+  Future<LinkedHashMap<String,dynamic>> fetchRequest(bool anything) async{
       String uri = '$server/movies/rand';
-      print(jsonEncode(_selectedItems));
       final user = await UserSecureStorage.getUsername() ?? "Guest";
       final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
@@ -245,11 +257,11 @@ class _HomePageState extends State<HomePage> {
       body: jsonEncode(<String, String>{
         'filters': jsonEncode(_selectedItems),
         'id' : "0",
-        'user' : user
+        'user' : user,
+        'anything': anything.toString()
       }));
 
       if(response.statusCode == 200){
-        print(jsonDecode(response.body));
         return jsonDecode(response.body);
       }else {
         throw Exception('Failed fetching movie');
@@ -260,6 +272,7 @@ class _HomePageState extends State<HomePage> {
     if (isLoading == true){
       return const Center(child: CircularProgressIndicator());
     }
+    
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -438,16 +451,31 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               isLoading = true;
             });
-            final jsonResponse= await fetchRequest();
-            if(jsonResponse.isNotEmpty){
+            final jsonResponse= await fetchRequest(false);
+            print(jsonResponse["return"]);
+            if(jsonResponse["return"] == true){
               Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return MovieDetails(info: jsonResponse,selecteditems: _selectedItems);
+                  return MovieDetails(info: jsonResponse,selecteditems: _selectedItems,ids_list: []);
                 },
               ),
             );
+            }
+            else{
+              showDialog(context: context, builder: (context) =>
+              AlertDialog(
+                title: Text('Oops!'),
+                content: Text('There are no movies available for you with these filters!'),
+              actions:[
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () => Navigator.pop(context)
+                ),
+                ],
+              ),
+              );
             }
             setState(() {
               isLoading = false;
@@ -464,17 +492,38 @@ class _HomePageState extends State<HomePage> {
         SizedBox(height: 10),
         ElevatedButton(
           onPressed: () async{
-            final jsonResponse= await fetchRequest();
-            if(jsonResponse.isNotEmpty){
+            setState(() {
+              isLoading = true;
+            });
+            final jsonResponse= await fetchRequest(true);
+            print(jsonResponse["return"]);
+            if(jsonResponse["return"] == true){
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return MovieDetails(info: jsonResponse);
+                  return MovieDetails(info: jsonResponse,ids_list: []);
                 },
               ),
             );
             }
+            else{
+              showDialog(context: context, builder: (context) =>
+          AlertDialog(
+            title: Text('Oops!'),
+            content: Text('You\'ve watched everything we have :( '),
+          actions:[
+            TextButton(
+              child: Text('Ok..'),
+              onPressed: () => Navigator.pop(context)
+            ),
+            ],
+          ),
+          );
+            }
+            setState(() {
+              isLoading = false;
+            });
           },
           style: ElevatedButton.styleFrom(
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
