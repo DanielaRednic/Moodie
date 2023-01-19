@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MovieDetails/movie_details.dart';
+import 'package:moodie/user_details.dart';
 
 import '../../Welcome/welcome_screen.dart';
 import '../../../constants.dart';
@@ -22,7 +23,7 @@ class MultiSelect extends StatefulWidget {
 class _MultiSelectState extends State<MultiSelect> {
   // this variable holds the selected items
   final List<String> _selectedItems = [];
-
+  bool isLoading = false;
 // This function is triggered when a checkbox is checked or unchecked
   void _itemChange(String itemValue, bool isSelected) {
     setState(() {
@@ -67,6 +68,9 @@ class _MultiSelectState extends State<MultiSelect> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading == true){
+      return const Center(child: CircularProgressIndicator());
+    }
     return AlertDialog(
       title: const Text('Select your choices'),
       content: SingleChildScrollView(
@@ -105,7 +109,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<String> _selectedItems = [];
-
+  bool isLoading = false;
   void _showMultiSelectMood() async {
     // a list of selectable items
     // these items can be hard-coded or dynamically fetched from a database/API
@@ -237,11 +241,14 @@ class _HomePageState extends State<HomePage> {
   Future<LinkedHashMap<String,dynamic>> fetchRequest() async{
       String uri = '$server/movies/rand';
       print(jsonEncode(_selectedItems));
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
       final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        'filters': jsonEncode(_selectedItems)
+        'filters': jsonEncode(_selectedItems),
+        'id' : "0",
+        'user' : user
       }));
 
       if(response.statusCode == 200){
@@ -253,6 +260,9 @@ class _HomePageState extends State<HomePage> {
     }
   @override
   Widget build(BuildContext context) {
+    if (isLoading == true){
+      return const Center(child: CircularProgressIndicator());
+    }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -428,17 +438,23 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 100),
           ElevatedButton(
           onPressed: () async{
+            setState(() {
+              isLoading = true;
+            });
             final jsonResponse= await fetchRequest();
             if(jsonResponse.isNotEmpty){
               Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return MovieDetails(info: jsonResponse);
+                  return MovieDetails(info: jsonResponse,selecteditems: _selectedItems);
                 },
               ),
             );
             }
+            setState(() {
+              isLoading = false;
+            });
           },
           style: ElevatedButton.styleFrom(
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),

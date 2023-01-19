@@ -282,7 +282,15 @@ def api_get_random_movie():
               ]
        
        filters = {}
-       
+       ids=[]
+       if data["user"] != "Guest":
+              results = DB.get_user_movies_ids(data["user"])
+              for result in results["movies"]:
+                     ids.append(result["movie_id"])
+       if int(data["id"]) != 0:
+              ids.append(int(data["id"]))
+              
+       filters["ids"]= ids 
        for duration in durations:
               if duration in data_list:
                      filters["duration"]= duration
@@ -320,9 +328,9 @@ def api_get_random_movie():
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:
-                     print(movie["rotten"],movie["imdb"])
                      return jsonify(
                      {
+                            "movie_id":movie["movie_id"],
                             "title": movie["name"],
                             "genre": movie["genre"],
                             "year": movie["year"],
@@ -336,11 +344,10 @@ def api_get_random_movie():
                             "imdb": movie["imdb"]
                      }
                      )
-       else:
-              return jsonify({
-                     "error": "No movie found",
-                     "return": False
-              })
+       return jsonify({
+              "error": "No movie found",
+              "return": False
+       })
     
 @app.route('/rating', methods=["POST","PUT"])
 def add_rating():
