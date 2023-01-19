@@ -5,6 +5,7 @@ import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../constants.dart';
 import '../user_details.dart';
+import 'UserPage/user_page.dart';
 
 class NavBar extends StatefulWidget {
   @override
