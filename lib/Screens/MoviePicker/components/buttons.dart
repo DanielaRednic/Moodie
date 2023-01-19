@@ -69,7 +69,7 @@ class _MultiSelectState extends State<MultiSelect> {
   @override
   Widget build(BuildContext context) {
     if (isLoading == true){
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
     return AlertDialog(
       title: const Text('Select your choices'),
@@ -258,13 +258,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     if (isLoading == true){
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
               SizedBox(height: 100),

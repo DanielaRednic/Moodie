@@ -29,19 +29,19 @@ class MobileSignupScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         const SignUpScreenTopImage(),
         Row(
           children: [
             Spacer(),
             Expanded(
-              flex: 8,
+              flex: 7,
               child: SignUpForm(),
             ),
             Spacer(),
           ],
-        ),
-        // const SocalSignUp()
+        )
       ],
     );
   }

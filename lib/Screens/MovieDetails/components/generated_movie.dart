@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moodie/Screens/MovieDetails/movie_details.dart';
 import 'package:moodie/Screens/UserPage/user_page.dart';
 
@@ -32,13 +31,15 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
   void initState() {
     final videoID = YoutubePlayer.convertUrlToId(info["trailer"]);
 
+    super.initState();
     _controller = new YoutubePlayerController(
       initialVideoId:  videoID!,
       flags: const YoutubePlayerFlags(
         autoPlay: false,
+        mute: false,
+        loop: false,
       ),
     );
-    super.initState();
   }
 
   bool isLoading = false;
@@ -46,7 +47,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
   @override
   Widget build(BuildContext context) {
     if(isLoading == true){
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
     Future<LinkedHashMap<String,dynamic>> fetchNewMovieRequest(bool addID) async{
       String uri = '$server/movies/rand';
@@ -145,7 +146,8 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
               width: MediaQuery.of(context).size.width*0.60,
               height: MediaQuery.of(context).size.height*0.25,
               child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                elevation: 20,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 color: kPrimaryLightColor.withOpacity(0.5),
                 child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -153,7 +155,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text("Title: "+movieTitle+" ("+movieYear+")", style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold)),
+                  Text("Title: "+movieTitle+" ("+movieYear+")", style: TextStyle(color: Colors.white, fontSize: 18.5, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Text("Duration: "+movieDuration, style: TextStyle(color: Colors.white, fontSize: 18.0)),
                   SizedBox(height: 10),
@@ -173,7 +175,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           mainAxisAlignment: MainAxisAlignment.center,
           children:[
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(1.0),
               child: Text('Description', style: TextStyle(color: Colors.white, fontSize: 20.0)),
               )
           ] 
@@ -183,18 +185,17 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           mainAxisAlignment: MainAxisAlignment.center,
           children:[
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(5.0),
               child: Container(
               height: 90,
               decoration: BoxDecoration(
                 color: kPrimaryLightColor.withOpacity(0.5),
                 border: Border.all(
-                color: kPrimaryLightColor.withOpacity(0.5),
+                color: kPrimaryLightColor.withOpacity(0),
                 ),
               borderRadius: BorderRadius.all(Radius.circular(20))
             ),
               width: MediaQuery.of(context).size.width*0.94,
-              //color: kPrimaryLightColor.withOpacity(0.5),
               padding: EdgeInsets.all(8.0),
                 child: SingleChildScrollView(
                 child: Text(movieDescription, style: TextStyle(color: Colors.white, fontSize:16.0))
@@ -219,17 +220,18 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                     handleColor: kPrimaryLightColor,
                   ),
                 ),
-                const PlaybackSpeedButton(),
+                RemainingDuration(),
+                const PlaybackSpeedButton()
               ],
             )
           ],
         ),
         SizedBox(height: 5),
         Row(
-          children: [
-            Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
               children: [
                 ElevatedButton(
               onPressed: () {

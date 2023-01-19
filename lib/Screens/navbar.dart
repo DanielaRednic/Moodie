@@ -53,8 +53,8 @@ class _NavBar extends State<NavBar>{
           )
           ),
           ListTile(
-            leading: const Icon(Icons.table_view_outlined, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
-            title: const Text("My movies", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
+            leading: const Icon(Icons.table_view_outlined, size: 30, color:Colors.white),
+            title: const Text("My movies", style: TextStyle(color:Colors.white, fontSize: 18.0)),
             onTap: () {
               Navigator.pop(context);
               Navigator.pushReplacement(
@@ -69,8 +69,8 @@ class _NavBar extends State<NavBar>{
           ),
           const Divider(),
           ListTile(
-            leading: Icon(Icons.rocket_launch_outlined, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
-            title: Text("Movie time!", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
+            leading: Icon(Icons.rocket_launch_outlined, size: 30, color:Colors.white),
+            title: Text("Movie time!", style: TextStyle(color:Colors.white, fontSize: 18.0)),
             onTap: () {
               Navigator.pop(context);
               Navigator.pushReplacement(
@@ -85,8 +85,8 @@ class _NavBar extends State<NavBar>{
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, size: 30, color:Color.fromARGB(255, 26, 3, 56)),
-            title: const Text("Log out", style: TextStyle(color:Color.fromARGB(255, 26, 3, 56), fontSize: 18.0)),
+            leading: const Icon(Icons.logout, size: 30, color:Colors.white),
+            title: const Text("Log out", style: TextStyle(color:Colors.white, fontSize: 18.0)),
             onTap: () {
               setState(() {
                 UserSecureStorage.setLoggedIn(false);
@@ -102,28 +102,24 @@ class _NavBar extends State<NavBar>{
                     );
               }
           ),
-          Row
-          (
-            children:
-            [
-              Column
-              (
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children:
-                [
-                  Container
-                  (
-                    width: MediaQuery.of(context).size.width*0.2,
-                    alignment: Alignment.bottomCenter,
-                    child: Image.asset(
-                      'assets/images/tanooki-logo.png'
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
+          // Row
+          // (
+          //   children:
+          //   [
+          //   Align(
+          //     alignment: FractionalOffset.bottomCenter,
+          //       child:Container(
+          //         width: MediaQuery.of(context).size.width*0.2,
+          //         child: Column(
+          //           children: <Widget>[
+          //             Divider(),
+          //             Image.asset('assets/images/tanooki-logo.png')
+          //           ]
+          //         )
+          //       )
+          //     ),
+          //   ],
+          // ),
         ],
       )
     );
