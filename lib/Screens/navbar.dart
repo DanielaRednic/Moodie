@@ -5,6 +5,7 @@ import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../constants.dart';
 import '../user_details.dart';
+import 'UserPage/user_page.dart';
 
 class NavBar extends StatefulWidget {
   @override
@@ -43,7 +44,7 @@ class _NavBar extends State<NavBar>{
           accountEmail: Text(controllerEmail.text, style: const TextStyle(color: Colors.white)),
           currentAccountPicture: CircleAvatar(
             child: Image.asset(
-              'assets/images/moodie-purple.png'
+              'assets/images/moodie-white.png'
               ),
               backgroundColor: kPrimaryLightColor,
             ),
@@ -60,7 +61,7 @@ class _NavBar extends State<NavBar>{
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return MovieDetails();
+                    return UserPage();
                   },
                 ),
               );
@@ -101,17 +102,28 @@ class _NavBar extends State<NavBar>{
                     );
               }
           ),
-          Row(
-            children:[
-            Expanded(
-                flex: 1, 
-                child: Image.asset(
-                'assets/images/tanooki-logo.png',
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.bottomCenter,
-                ),
-              )],
-            ),
+          Row
+          (
+            children:
+            [
+              Column
+              (
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:
+                [
+                  Container
+                  (
+                    width: MediaQuery.of(context).size.width*0.2,
+                    alignment: Alignment.bottomCenter,
+                    child: Image.asset(
+                      'assets/images/tanooki-logo.png'
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
         ],
       )
     );
