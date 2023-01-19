@@ -10,22 +10,20 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: defaultPadding * 2),
-        Row(
-          children: [
-            Spacer(),
+          SizedBox(height: defaultPadding),
             Expanded(
-              flex: 2, 
-              child: Image.asset(
-              'assets/images/moodie-white.png'
-              ),
+              flex: 1, 
+              child: Container(
+
+              width: MediaQuery.of(context).size.width*0.60,
+              child: Image.asset('assets/images/moodie-white.png'),
+              )
             ),
-            Spacer(),
-          ],
-        ),
-        Spacer(),
-         Expanded(
+          SizedBox(height: defaultPadding),
+          Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
@@ -34,19 +32,19 @@ class Body extends StatelessWidget {
                         child: LoginAndSignupBtn(),
                       ),
                     ],
-                  ),
-                ),
-        //SizedBox(height: defaultPadding * 2),
-        Expanded(
-              flex: 1, 
-              child: Image.asset(
-              'assets/images/welcome-decor.png',
-              fit: BoxFit.fitWidth,
-              alignment: Alignment.bottomLeft
-              ),
+        
+                ),),
+          SizedBox(height: defaultPadding),
+          Expanded(
+              child: Container(
+
+              width: MediaQuery.of(context).size.width*0.60,
+              child: Image.asset('assets/images/decor.png'),
+              alignment: Alignment.bottomCenter,
+              )
             ),
       ],
-    );
+      );
   }
 }
 

@@ -16,7 +16,6 @@ class WelcomeScreenTopImage extends StatelessWidget {
           children: [
             Spacer(),
             Expanded(
-              flex: 1, 
               child: Image.asset(
               'assets/images/moodie-white.png'
               ),

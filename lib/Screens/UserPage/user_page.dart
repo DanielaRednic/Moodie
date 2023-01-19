@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/navbar.dart';
 
-import '../Welcome/components/background.dart';
 import 'components/movie_list.dart';
 
 class UserPage extends StatelessWidget {

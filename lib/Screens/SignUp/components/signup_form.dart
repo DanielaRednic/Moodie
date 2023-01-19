@@ -29,7 +29,7 @@ class _SignUpForm extends State<SignUpForm> {
   TextEditingController confirmPasswordController = TextEditingController();
 
   if(isLoading == true){
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
 
   Future<LinkedHashMap<String,dynamic>> makeRequest() async{
@@ -67,14 +67,12 @@ class _SignUpForm extends State<SignUpForm> {
               hintText: "E-mail",
               hintStyle: TextStyle(color: Colors.white),
               prefixIcon: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                 child: Icon(Icons.email, color: Colors.white),
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: TextFormField(
+          TextFormField(
               maxLength: 30,
               controller: usernameController,
               textInputAction: TextInputAction.next,
@@ -84,16 +82,18 @@ class _SignUpForm extends State<SignUpForm> {
                 hintText: "Username",
                 hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                   child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
             ),
-          ),
           PasswordTextField(controller: passwordController),
           ConfirmPasswordTextField(controller: confirmPasswordController),
           const SizedBox(height: defaultPadding / 2, ),
-          ElevatedButton(
+          SizedBox(
+          width: 225,
+          height: 40,
+          child: ElevatedButton(
             onPressed: () async{
               setState(() {
                 isLoading = true;
@@ -144,8 +144,12 @@ class _SignUpForm extends State<SignUpForm> {
               primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 10, 80, 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
             child: Text("Sign Up"),
-          ),
-          ElevatedButton(
+          ),),
+          const SizedBox(height: 10),
+          SizedBox(
+          width: 225,
+          height: 40,
+          child: ElevatedButton(
           onPressed: () {
             Navigator.push(
               context,
@@ -163,7 +167,7 @@ class _SignUpForm extends State<SignUpForm> {
             "Home",
             style: TextStyle(color: Colors.white),
           ),
-        ),
+        ),),
           const SizedBox(height: defaultPadding),
         ],
       ),
