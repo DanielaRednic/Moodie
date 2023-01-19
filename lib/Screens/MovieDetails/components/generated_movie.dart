@@ -1,21 +1,30 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moodie/Screens/MovieDetails/movie_details.dart';
 import 'package:moodie/Screens/UserPage/user_page.dart';
 
 import '../../../constants.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../../user_details.dart';
+import 'package:http/http.dart' as http;
+
 class YouTubePlayerFlutter extends StatefulWidget {
-  const YouTubePlayerFlutter({Key? key, this.info}) : super(key: key);
+  const YouTubePlayerFlutter({Key? key, this.info,this.selecteditems}) : super(key: key);
   final info;
+  final selecteditems;
 
   @override
-  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState(info);
+  State<YouTubePlayerFlutter> createState() => _YouTubePlayerFlutterState(info,selecteditems);
 }
 
 class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
   final info;
-  _YouTubePlayerFlutterState(this.info);
+  final selectedItems;
+  _YouTubePlayerFlutterState(this.info,this.selectedItems);
 
   late YoutubePlayerController _controller;
 
@@ -32,8 +41,53 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
     super.initState();
   }
 
+  bool isLoading = false;
+
   @override
   Widget build(BuildContext context) {
+    if(isLoading == true){
+      return const Center(child: CircularProgressIndicator());
+    }
+    Future<LinkedHashMap<String,dynamic>> fetchNewMovieRequest(bool addID) async{
+      String uri = '$server/movies/rand';
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
+      String id;
+
+      if(addID == true){
+        id = info["movie_id"].toString();
+        final addMovie_response = await http.post(Uri.parse('$server/user/movie/add'),headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+              "id": info["movie_id"].toString(),
+              "user": user
+            }
+          )
+        );
+        if(addMovie_response.statusCode == 200){
+          print(jsonDecode(addMovie_response.body));
+        }
+      }
+      else{
+        id ="0";
+      }
+
+      final response = await http.post(Uri.parse(uri),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'filters': jsonEncode(selectedItems),
+        'id' : id,
+        'user' : user
+      }));
+
+      if(response.statusCode == 200){
+        return jsonDecode(response.body);
+      }else {
+        throw Exception('Failed fetching movie');
+      }
+    }
+    
     String movieTitle = info["title"];
     String moviePoster = info["poster"];
     String movieYear = info["year"].toString();
@@ -58,7 +112,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           Column(
             children:
             [
-            Card(
+            const Card(
               elevation: 20,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))),
               InkWell(
@@ -68,7 +122,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                 crossAxisAlignment: CrossAxisAlignment.center,  // add this
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0),
                       bottomLeft: Radius.circular(8.0),
@@ -189,33 +243,57 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "Great! I'll go watch it.",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            
+          onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+            final response = await fetchNewMovieRequest(true);
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) {
+                        return MovieDetails(info:response,selecteditems: selectedItems);
+                      },
+                    )
+                  );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "I have already seen it",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            
+          onPressed: () async {
+            setState(() {
+              isLoading = true;
+            });
+            final response = await fetchNewMovieRequest(false);
+            setState(() {
+              isLoading = false;
+            });
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                      builder: (context) {
+                        return MovieDetails(info:response,selecteditems: selectedItems);
+                      },
+                    )
+                  );
           },
           style: ElevatedButton.styleFrom(
-              primary: Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
+              backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(29.0))),
-          child: Text(
+          child: const Text(
             "I want a different movie",
             style: TextStyle(color: Colors.white, fontSize: 16.0),
           ),

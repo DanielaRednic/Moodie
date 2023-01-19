@@ -10,10 +10,16 @@ import 'custom_password_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class SignUpForm extends StatelessWidget {
-  const SignUpForm({
-    Key? key,
-  }) : super(key: key);
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
+  @override
+  _SignUpForm createState() => _SignUpForm();
+}
+
+class _SignUpForm extends State<SignUpForm> {
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +28,12 @@ class SignUpForm extends StatelessWidget {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
 
+  if(isLoading == true){
+      return const Center(child: CircularProgressIndicator());
+    }
+
   Future<LinkedHashMap<String,dynamic>> makeRequest() async{
-      const uri = 'http://192.168.0.102:5000/user/add';
+      const uri = '$server/user/add';
       final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -46,17 +56,18 @@ class SignUpForm extends StatelessWidget {
       child: Column(
         children: [
           TextFormField(
+            maxLength: 50,
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             cursorColor: kPrimaryColor,
-            style: TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.white),
             onSaved: (email) {},
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: "E-mail",
               hintStyle: TextStyle(color: Colors.white),
               prefixIcon: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                 child: Icon(Icons.email, color: Colors.white),
               ),
             ),
@@ -64,15 +75,16 @@ class SignUpForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 5),
             child: TextFormField(
+              maxLength: 30,
               controller: usernameController,
               textInputAction: TextInputAction.next,
               cursorColor: kPrimaryColor,
-              style: TextStyle(color: Colors.white),
-              decoration: InputDecoration(
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
                 hintText: "Username",
                 hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
                   child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
@@ -83,7 +95,13 @@ class SignUpForm extends StatelessWidget {
           const SizedBox(height: defaultPadding / 2, ),
           ElevatedButton(
             onPressed: () async{
+              setState(() {
+                isLoading = true;
+              });
               final jsonResponse= await makeRequest();
+              setState((){
+                isLoading = false;
+              });
               if(jsonResponse.containsKey("error")==false)
               {
                 showDialog(context: context, builder: (context) =>
@@ -93,7 +111,14 @@ class SignUpForm extends StatelessWidget {
                 actions:[
                   TextButton(
                         child: Text('Ok'),
-                        onPressed: () => Navigator.pop(context)
+                        onPressed: () { 
+                          Navigator.pop(context);
+                          Navigator.pushReplacement(context, MaterialPageRoute(
+                            builder: (context) {
+                              return WelcomeScreen();
+                            },
+                          ),);
+                        }
                       ),
                     ],
                   ),

@@ -48,6 +48,9 @@ def get_email(username):
 def get_user_movies(username):
     return db.users.find_one({"username": username},{"movies":1})
 
+def get_user_movies_ids(username):
+    return db.users.find_one({"username": username},{"movies.movie_id":1})
+
 def get_list_movies(ids):
     query={}
     
@@ -73,7 +76,9 @@ def add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating,desc,trailer_
 
 def aggregate_filters(filters):
     query={}
-    
+    if "ids" in filters:
+        ids = filters["ids"]
+        query["movie_id"] = { "$not": {"$in": ids}}
     if "genre" in filters:
         genre=filters["genre"]
         query["genre"] = { "$in": genre }

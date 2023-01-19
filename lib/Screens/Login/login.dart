@@ -32,13 +32,13 @@ class LoginScreen extends StatelessWidget {
       children: <Widget>[
         const LoginScreenTopImage(),
         Row(
-          children: const [
-            Spacer(),
+          children: [
+            const Spacer(),
             Expanded(
               flex: 8,
               child: LoginForm(),
             ),
-            Spacer(),
+            const Spacer(),
           ],
         ),
         // const SocalSignUp()
