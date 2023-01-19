@@ -16,9 +16,6 @@ def password_check(password):
        if len(password) < 6:
               val = False
               
-       if len(password) > 20:
-              val = False
-              
        if not any(char.isdigit() for char in password):
               val = False
               
@@ -148,14 +145,6 @@ def api_add_user():
        user = data['user']
        passw = data['pass']
        email = data['email']
-       
-       if(passw.encode("UTF-8")!=data['confirm_pass'].encode("UTF-8")):
-              return jsonify({"error": "Passwords do not match",
-                              "return": False})
-       
-       if(not(password_check(passw))):
-              return jsonify({"error": "Password does not meet requirements",
-                              "return": False})
               
        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
        if(not(re.fullmatch(regex,email))):
@@ -164,6 +153,14 @@ def api_add_user():
        
        if (DB.search_user(user,email)):
               return jsonify({"error": "User or Email already in use",
+                              "return": False})
+       
+       if(passw.encode("UTF-8")!=data['confirm_pass'].encode("UTF-8")):
+              return jsonify({"error": "Passwords do not match",
+                              "return": False})
+       
+       if(not(password_check(passw))):
+              return jsonify({"error": "Password does not meet requirements!\nMust contain 1 uppercase letter, 1 number and 1 special symbol",
                               "return": False})
        
        return DB.add_user(user, passw.encode("UTF-8"), email)
@@ -273,11 +270,8 @@ def api_get_random_movie():
        ]
        
        years = [
-              '2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012','2011','2010','2009','2008','2007','2006','2005','2004',
-              '2003','2002','2001','2000','1999','1998','1997','1996','1995','1994','1993','1992','1991','1990','1989','1988','1987','1986','1985','1984',
-              '1983','1982','1981','1980','1979','1978','1977','1976','1975','1974','1973','1972','1971','1970','1969','1968','1967','1966','1965','1964',
-              '1963','1962','1961','1960','1959','1958','1957','1956','1955','1954','1953','1952','1951','1950','1949','1948','1947','1946','1945','1944',
-              ]
+              '2023','2022','2021','2020','2019','2018','2017','2016','2015','2014','2013','2012',
+              '2011','2010','2009','2008','2007','2006','2005','2004','2003','2002','2001','2000']
 
        durations = [
               'over 3 hours',
@@ -288,7 +282,15 @@ def api_get_random_movie():
               ]
        
        filters = {}
-       
+       ids=[]
+       if data["user"] != "Guest":
+              results = DB.get_user_movies_ids(data["user"])
+              for result in results["movies"]:
+                     ids.append(result["movie_id"])
+       if int(data["id"]) != 0:
+              ids.append(int(data["id"]))
+              
+       filters["ids"]= ids 
        for duration in durations:
               if duration in data_list:
                      filters["duration"]= duration
@@ -326,9 +328,9 @@ def api_get_random_movie():
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:
-                     print(movie["rotten"],movie["imdb"])
                      return jsonify(
                      {
+                            "movie_id":movie["movie_id"],
                             "title": movie["name"],
                             "genre": movie["genre"],
                             "year": movie["year"],
@@ -342,11 +344,10 @@ def api_get_random_movie():
                             "imdb": movie["imdb"]
                      }
                      )
-       else:
-              return jsonify({
-                     "error": "No movie found",
-                     "return": False
-              })
+       return jsonify({
+              "error": "No movie found",
+              "return": False
+       })
     
 @app.route('/rating', methods=["POST","PUT"])
 def add_rating():
