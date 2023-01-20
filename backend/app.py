@@ -202,7 +202,7 @@ def api_remove_movie_from_user():
 def add_movie_to_db():
        data = request.json
        
-       return DB.add_movie(data["name"].capwords(),[x.lower() for x in data["genre"]],data["year"],data["duration"],[x.lower() for x in data["moods"]],data["rt_rating"],data["imdb_rating"], data["desc"],data["trailer_link"],data["poster_link"])
+       return DB.add_movie(data["name"].title(),[x.lower() for x in data["genre"]],data["year"],data["duration"],[x.lower() for x in data["moods"]],data["rt_rating"],data["imdb_rating"], data["desc"],data["trailer_link"],data["poster_link"])
 
 @app.route('/movies/rand', methods=["GET","POST"])
 def api_get_random_movie():
