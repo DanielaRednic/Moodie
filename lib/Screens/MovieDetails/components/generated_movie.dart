@@ -131,7 +131,6 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                     ),
                     child: Image.network(
                         moviePoster,
-                       // width: 300,
                         height: 200,
                         fit:BoxFit.fill
                     )
@@ -145,6 +144,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             Container(
               width: MediaQuery.of(context).size.width*0.60,
               height: MediaQuery.of(context).size.height*0.25,
+              child: SingleChildScrollView(
               child: Card(
                 elevation: 20,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -165,7 +165,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                   Text("Rotten Tomatoes: "+rottenRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
                 ],
               ),)
-            ),)
+            ),))
           
           ] 
         ),
