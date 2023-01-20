@@ -31,11 +31,10 @@ def password_check(password):
        return val
 
 def get_duration_string(duration):
-       hours = duration//60
-       minutes = duration%60
+       hours = int(duration)//60
+       minutes = int(duration)%60
        
        time_string= "{}h {}m".format(hours,minutes)
-       print(time_string)
        return time_string
 
 app = Flask(__name__)
@@ -56,16 +55,19 @@ def api_get_movie_by_id(given_id=None):
        for movie in result:
               return jsonify(
               {
-                     "id": movie["movie_id"],
+                     "movie_id":movie["movie_id"],
                      "title": movie["name"],
                      "genre": movie["genre"],
                      "year": movie["year"],
-                     "duration": movie["duration"],
+                     "duration": get_duration_string(movie["duration"]),
                      "rating": movie["rating"],
                      "description": movie["description"],
                      "trailer": movie["trailer"],
                      "poster": movie["poster"],
-                     "mood": movie["mood"]
+                     "mood": movie["mood"],
+                     "rt_rating": movie["rotten"],
+                     "imdb": movie["imdb"],
+                     "return": True
               }
               )
 
@@ -120,7 +122,7 @@ def api_get_user_movies():
 
               final_list=[]
               for movie in resulted_movies:
-                     print(movie)
+                     print(movie["name"])
                      print(dict_movies_user.get(movie["movie_id"]))
                      final_list.append(dict([
                             ("year",movie["year"]),
@@ -129,7 +131,6 @@ def api_get_user_movies():
                             ("rating",dict_movies_user.get(movie["movie_id"])),
                             ("id",movie["movie_id"])
                      ]))
-              print(final_list)
               return jsonify({
                      "movies":final_list,
                      "return": True
@@ -200,28 +201,59 @@ def api_remove_movie_from_user():
 
 @app.route('/movies/add', methods=["POST"])
 def add_movie_to_db():
-       name = request.form.get('name')
-       genre = request.form.getlist('genre')
-       year = request.form.get('year')
-       duration = request.form.get('duration')
-       moods = request.form.getlist('moods')
-       rt_rating = request.form.get('rt_rating')
-       imdb_rating = request.form.get('imdb_rating')
-       desc = request.form.get('desc')
-       trailer_link = request.form.get('trailer_link')
-       poster_link = request.form.get('poster_link')
+       data = request.json
        
-       return DB.add_movie(name,genre,year,duration,moods,rt_rating,imdb_rating, desc,trailer_link,poster_link)
+       return DB.add_movie(data["name"].title(),[x.lower() for x in data["genre"]],data["year"],data["duration"],[x.lower() for x in data["moods"]],data["rt_rating"],data["imdb_rating"], data["desc"],data["trailer_link"],data["poster_link"])
 
 @app.route('/movies/rand', methods=["GET","POST"])
 def api_get_random_movie():
        data = request.json
+       print("Any movie:",data["anything"])
+       
+       ids=[]
+       if(data["id"] !="0"):
+              ids= list(data["id"][1:-1].split(","))
+              for i in range(len(ids)):
+                     ids[i]= int(ids[i][1:-1])
+       
+       if data["user"] != "Guest":
+              results = DB.get_user_movies_ids(data["user"])
+              for result in results["movies"]:
+                     ids.append(result["movie_id"])
+       
+       if(data["anything"] == "true"):
+              filters={}
+              filters["ids"]= ids 
+              result = DB.get_random_movie(filters)
+              if(result):
+                     for movie in result:
+                            return jsonify(
+                            {
+                                   "movie_id":movie["movie_id"],
+                                   "title": movie["name"],
+                                   "genre": movie["genre"],
+                                   "year": movie["year"],
+                                   "duration": get_duration_string(movie["duration"]),
+                                   "rating": movie["rating"],
+                                   "description": movie["description"],
+                                   "trailer": movie["trailer"],
+                                   "poster": movie["poster"],
+                                   "mood": movie["mood"],
+                                   "rt_rating": movie["rotten"],
+                                   "imdb": movie["imdb"],
+                                   "return": True
+                            }
+                            )
+              return jsonify({
+                     "error": "No movie found",
+                     "return": False
+              })
+             
        data_list= list(data["filters"][1:-1].split(","))
        
        for i in range(len(data_list)):
               data_list[i]= data_list[i][1:-1]
-              
-       print(data_list)
+       
        
        moods = [
               'Adventurous',
@@ -282,14 +314,7 @@ def api_get_random_movie():
               ]
        
        filters = {}
-       ids=[]
-       if data["user"] != "Guest":
-              results = DB.get_user_movies_ids(data["user"])
-              for result in results["movies"]:
-                     ids.append(result["movie_id"])
-       if int(data["id"]) != 0:
-              ids.append(int(data["id"]))
-              
+
        filters["ids"]= ids 
        for duration in durations:
               if duration in data_list:
@@ -325,6 +350,7 @@ def api_get_random_movie():
        if len(mood_list) != 0:
               filters["moods"]= mood_list
        
+       print("Filters:\n",filters)
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:
@@ -341,7 +367,8 @@ def api_get_random_movie():
                             "poster": movie["poster"],
                             "mood": movie["mood"],
                             "rt_rating": movie["rotten"],
-                            "imdb": movie["imdb"]
+                            "imdb": movie["imdb"],
+                            "return": True
                      }
                      )
        return jsonify({

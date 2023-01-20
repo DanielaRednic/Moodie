@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moodie/user_details.dart';
 import '../../../constants.dart';
 import 'login_and_signup.dart';
 

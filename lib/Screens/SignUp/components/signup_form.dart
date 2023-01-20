@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:moodie/Screens/Welcome/welcome_screen.dart';
 
 import '../../../constants.dart';
@@ -56,6 +57,7 @@ class _SignUpForm extends State<SignUpForm> {
       child: Column(
         children: [
           TextFormField(
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[^ ]+"))],
             maxLength: 50,
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
@@ -72,7 +74,10 @@ class _SignUpForm extends State<SignUpForm> {
               ),
             ),
           ),
-          TextFormField(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: TextFormField(
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[^ ]+"))],
               maxLength: 30,
               controller: usernameController,
               textInputAction: TextInputAction.next,
@@ -86,7 +91,8 @@ class _SignUpForm extends State<SignUpForm> {
                   child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
-            ),
+            )
+          ),
           PasswordTextField(controller: passwordController),
           ConfirmPasswordTextField(controller: confirmPasswordController),
           const SizedBox(height: defaultPadding / 2, ),

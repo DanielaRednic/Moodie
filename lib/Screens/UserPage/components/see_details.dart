@@ -1,20 +1,25 @@
+import 'dart:collection';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:moodie/Screens/UserPage/user_page.dart';
 
 import '../../../constants.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../../../user_details.dart';
+import 'package:http/http.dart' as http;
 
 class SeeDetails extends StatefulWidget {
   const SeeDetails({Key? key, this.info}) : super(key: key);
   final info;
 
   @override
-  State<SeeDetails> createState() => _YouTubePlayerFlutterState(info);
+  State<SeeDetails> createState() => _SeeDetails(info);
 }
 
-class _YouTubePlayerFlutterState extends State<SeeDetails> {
+class _SeeDetails extends State<SeeDetails> {
   final info;
-  _YouTubePlayerFlutterState(this.info);
+  _SeeDetails(this.info);
 
   late YoutubePlayerController _controller;
 
@@ -22,17 +27,59 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
   void initState() {
     final videoID = YoutubePlayer.convertUrlToId(info["trailer"]);
 
+    super.initState();
     _controller = new YoutubePlayerController(
       initialVideoId:  videoID!,
       flags: const YoutubePlayerFlags(
         autoPlay: false,
+        mute: false,
+        loop: false,
       ),
     );
-    super.initState();
   }
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    if(isLoading == true){
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
+    }
+    Future<LinkedHashMap<String,dynamic>> fetchNewMovieRequest(bool addID) async{
+      String uri = '$server/movies/rand';
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
+      print(info["anything"].toString());
+      if(addID == true){
+        String id = info["movie_id"].toString();
+        final addMovie_response = await http.post(Uri.parse('$server/user/movie/add'),headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+              "id": info["movie_id"].toString(),
+              "user": user
+            }
+          )
+        );
+        if(addMovie_response.statusCode == 200){
+          print(jsonDecode(addMovie_response.body));
+        }
+      }
+
+      final response = await http.post(Uri.parse(uri),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'user' : user,
+        "anything": info["anything"].toString()
+      }));
+
+      if(response.statusCode == 200){
+        return jsonDecode(response.body);
+      }else {
+        throw Exception('Failed fetching movie');
+      }
+    }
+    
     String movieTitle = info["title"];
     String moviePoster = info["poster"];
     String movieYear = info["year"].toString();
@@ -57,7 +104,7 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
           Column(
             children:
             [
-            Card(
+            const Card(
               elevation: 20,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))),
               InkWell(
@@ -67,7 +114,7 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
                 crossAxisAlignment: CrossAxisAlignment.center,  // add this
                 children: <Widget>[
                   ClipRRect(
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(8.0),
                       topRight: Radius.circular(8.0),
                       bottomLeft: Radius.circular(8.0),
@@ -75,7 +122,6 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
                     ),
                     child: Image.network(
                         moviePoster,
-                       // width: 300,
                         height: 200,
                         fit:BoxFit.fill
                     )
@@ -90,7 +136,8 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
               width: MediaQuery.of(context).size.width*0.60,
               height: MediaQuery.of(context).size.height*0.25,
               child: Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                elevation: 20,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 color: kPrimaryLightColor.withOpacity(0.5),
                 child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -98,7 +145,7 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  Text("Title: "+movieTitle+" ("+movieYear+")", style: TextStyle(color: Colors.white, fontSize: 20.0, fontWeight: FontWeight.bold)),
+                  Text("Title: "+movieTitle+" ("+movieYear+")", style: TextStyle(color: Colors.white, fontSize: 18.5, fontWeight: FontWeight.bold)),
                   SizedBox(height: 10),
                   Text("Duration: "+movieDuration, style: TextStyle(color: Colors.white, fontSize: 18.0)),
                   SizedBox(height: 10),
@@ -118,7 +165,7 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
           mainAxisAlignment: MainAxisAlignment.center,
           children:[
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(1.0),
               child: Text('Description', style: TextStyle(color: Colors.white, fontSize: 20.0)),
               )
           ] 
@@ -128,18 +175,17 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
           mainAxisAlignment: MainAxisAlignment.center,
           children:[
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(5.0),
               child: Container(
               height: 90,
               decoration: BoxDecoration(
                 color: kPrimaryLightColor.withOpacity(0.5),
                 border: Border.all(
-                color: kPrimaryLightColor.withOpacity(0.5),
+                color: kPrimaryLightColor.withOpacity(0),
                 ),
               borderRadius: BorderRadius.all(Radius.circular(20))
             ),
               width: MediaQuery.of(context).size.width*0.94,
-              //color: kPrimaryLightColor.withOpacity(0.5),
               padding: EdgeInsets.all(8.0),
                 child: SingleChildScrollView(
                 child: Text(movieDescription, style: TextStyle(color: Colors.white, fontSize:16.0))
@@ -164,22 +210,13 @@ class _YouTubePlayerFlutterState extends State<SeeDetails> {
                     handleColor: kPrimaryLightColor,
                   ),
                 ),
-                const PlaybackSpeedButton(),
+                RemainingDuration(),
+                const PlaybackSpeedButton()
               ],
             )
           ],
         ),
-        SizedBox(height: 5),
-        
       ],
     );
   }
 }
-
-// class GeneratedMovie extends StatelessWidget {
-//   const GeneratedMovie({
-//     Key? key,
-//   }) : super(key: key);
-
-  
-// }
