@@ -213,7 +213,9 @@ def api_get_random_movie():
        ids=[]
        if(data["id"] !="0"):
               ids= list(data["id"][1:-1].split(","))
+              print(ids)
               for i in range(len(ids)):
+                     print(ids[i])
                      ids[i]= int(ids[i][1:-1])
        
        if data["user"] != "Guest":
