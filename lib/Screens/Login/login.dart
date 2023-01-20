@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../responsive.dart';
-import '../../constants.dart';
 import '../Welcome/components/background.dart';
 import 'components/login_top_image.dart';
 import 'components/login_form.dart';
@@ -40,8 +39,7 @@ class LoginScreen extends StatelessWidget {
             ),
             const Spacer(),
           ],
-        ),
-        // const SocalSignUp()
+        )
       ],
     );
   }

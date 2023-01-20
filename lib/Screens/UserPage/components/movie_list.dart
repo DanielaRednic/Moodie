@@ -63,23 +63,34 @@ class _MovieListState extends State<MovieList> {
     _loadMovies();
   }
 
+  bool isDescending = false;
+  
   @override
   Widget build(BuildContext context) {
     if (_movies == null) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
     if (_movies!.isEmpty) {
       return const Center(child: Text("No movies yet :("));
     }
     return Scaffold(
       appBar: AppBar(title: Text("My movies"), backgroundColor: kPrimaryColor, centerTitle: true, automaticallyImplyLeading: false),
-      body: buildList(),
+      body: Column(children: [
+        TextButton.icon(
+          icon:RotatedBox(quarterTurns: 1, child: Icon(Icons.compare_arrows_rounded,size: 28,color: kPrimaryColor),),
+          label: Text(isDescending ? 'Descending' : 'Ascending', style: TextStyle(fontSize: 16, color: kPrimaryColor)),
+          onPressed: () => setState(() => isDescending = !isDescending),
+        ),
+        Expanded(child: buildList()),
+      ]),
     );
   }
 
    Widget buildList() => ListView.builder(
       itemCount: _movies?.length,
       itemBuilder: (context, index) {
+        final sortedItems = _movies?..sort((item1,item2) => isDescending ? item2['name'].compareTo(item1['name']) : item1['name'].compareTo(item2['name']));
+        final item = sortedItems?[index];
         return Column(
           children: <Widget>[
             Container(
@@ -108,7 +119,7 @@ class _MovieListState extends State<MovieList> {
                             bottomLeft: Radius.circular(8.0),
                             bottomRight: Radius.circular(8.0)),
                           child: Image.network(
-                          _movies![index]["poster"],
+                          item["poster"],
                           height: 100,
                           fit:BoxFit.fill)
                         ),
@@ -120,14 +131,14 @@ class _MovieListState extends State<MovieList> {
                 VerticalDivider(),
                 Flexible(
                   flex: 25,
-                  child:Text(_movies![index]["name"] + ' (' + _movies![index]["year"].toString() + ')', style: TextStyle(color: Colors.white, fontSize: 14.0), softWrap: true, maxLines: 4, overflow: TextOverflow.ellipsis),
+                  child:Text(item["name"] + ' (' + item["year"].toString() + ')', style: TextStyle(color: Colors.white, fontSize: 14.0), softWrap: true, maxLines: 4, overflow: TextOverflow.ellipsis),
                 ),
                 VerticalDivider(),
 
                 Flexible(
                 flex: 7,
                 child: Container(
-                child: Text(_movies![index]["rating"].toString(), style: TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold))
+                child: Text(item["rating"].toString(), style: TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.bold))
                   )
                 ),
             Flexible(
@@ -143,9 +154,9 @@ class _MovieListState extends State<MovieList> {
               ),
               onChanged: (newValue) 
               {
-                updateRating(_movies![index]["id"].toString(), newValue.toString());
+                updateRating(item["id"].toString(), newValue.toString());
                   setState(() {
-                    _movies![index]["rating"]=newValue.toString();
+                    item["rating"]=newValue.toString();
                   });
               },
               items: <String>['10','9.5', '9', '8.5','8','7.5', '7','6.5', '6','5.5', '5','4.5', '4','3.5', '3','2.5', '2','1.5', '1','0']
@@ -192,7 +203,7 @@ class _MovieListState extends State<MovieList> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SeeDetails(info: _movies![index]["id"]);
+                  return SeeDetails(info: item["id"]);
                 },
               ),
             );

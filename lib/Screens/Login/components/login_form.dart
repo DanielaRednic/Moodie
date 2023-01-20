@@ -23,7 +23,7 @@ class _LoginForm extends State<LoginForm> {
   @override
   Widget build(BuildContext context) {
     if(isLoading == true){
-      return const Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
     }
     TextEditingController passwordController = TextEditingController();
     TextEditingController userinfoController = TextEditingController();
