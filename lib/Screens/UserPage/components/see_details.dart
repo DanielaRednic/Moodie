@@ -20,6 +20,7 @@ class SeeDetails extends StatefulWidget {
 class _SeeDetails extends State<SeeDetails> {
   final info;
   _SeeDetails(this.info);
+  bool isLoading = false;
 
   late YoutubePlayerController _controller;
 
@@ -38,13 +39,11 @@ class _SeeDetails extends State<SeeDetails> {
     );
   }
 
-  bool isLoading = false;
+
 
   @override
   Widget build(BuildContext context) {
-    if(isLoading == true){
-      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
-    }
+
     Future<LinkedHashMap<String,dynamic>> fetchNewMovieRequest(bool addID) async{
       String uri = '$server/movies/rand';
       final user = await UserSecureStorage.getUsername() ?? "Guest";
@@ -94,10 +93,14 @@ class _SeeDetails extends State<SeeDetails> {
     for(var genre in movieGenre) {
       strToDIsplay += "${genre[0].toUpperCase()}${genre.substring(1)} ";
     }
-    return Column(
+    if(isLoading == true){
+      return const Center(child: CircularProgressIndicator(color: kPrimaryColor));
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text("Movie details"), backgroundColor: kPrimaryColor, centerTitle: true, automaticallyImplyLeading: true),
+      body: Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        SizedBox(height: 10),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children:[
@@ -135,6 +138,7 @@ class _SeeDetails extends State<SeeDetails> {
             Container(
               width: MediaQuery.of(context).size.width*0.60,
               height: MediaQuery.of(context).size.height*0.25,
+              child: SingleChildScrollView(
               child: Card(
                 elevation: 20,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -156,7 +160,7 @@ class _SeeDetails extends State<SeeDetails> {
                 ],
               ),
             ),
-              )
+              ))
             )
           ] 
         ),
@@ -177,7 +181,7 @@ class _SeeDetails extends State<SeeDetails> {
             Padding(
               padding: const EdgeInsets.all(5.0),
               child: Container(
-              height: 90,
+              height: 150,
               decoration: BoxDecoration(
                 color: kPrimaryLightColor.withOpacity(0.5),
                 border: Border.all(
@@ -217,6 +221,6 @@ class _SeeDetails extends State<SeeDetails> {
           ],
         ),
       ],
-    );
+    ));
   }
 }

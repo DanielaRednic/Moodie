@@ -74,7 +74,7 @@ class _MovieListState extends State<MovieList> {
     super.initState();
     _loadMovies();
   }
-
+  bool isLoading = false;
   bool isDescending = false;
   
   @override
@@ -85,8 +85,9 @@ class _MovieListState extends State<MovieList> {
     if (_movies!.isEmpty) {
       return const Center(child: Text("No movies yet :("));
     }
+
     return Scaffold(
-      appBar: AppBar(title: Text("My movies"), backgroundColor: kPrimaryColor, centerTitle: true, automaticallyImplyLeading: false),
+
       body: Column(children: [
         TextButton.icon(
           icon:RotatedBox(quarterTurns: 1, child: Icon(Icons.compare_arrows_rounded,size: 28,color: kPrimaryColor),),
@@ -209,6 +210,9 @@ class _MovieListState extends State<MovieList> {
                 elevation: 20
             ),
             onPressed:() async{
+              setState(() {
+              isLoading = true;
+            });
             final jsonResponse = await getMovieRequest(item["id"]);
             if(jsonResponse["return"]== true){
             Navigator.push(
@@ -218,8 +222,11 @@ class _MovieListState extends State<MovieList> {
                   return SeeDetailsBuilder(info:jsonResponse);
                 },
               ),
-            );
+              );
             }
+            setState(() {
+              isLoading = false;
+            });
           },
               child: const Text('Details',style: TextStyle(fontSize: 12.0)),
             ),
