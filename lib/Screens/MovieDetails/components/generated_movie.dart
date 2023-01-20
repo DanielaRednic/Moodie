@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:moodie/Screens/MovieDetails/movie_details.dart';
+import 'package:moodie/Screens/MoviePicker/movie_picker.dart';
 import 'package:moodie/Screens/UserPage/user_page.dart';
 
 import '../../../constants.dart';
@@ -54,10 +55,9 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
     Future<LinkedHashMap<String,dynamic>> fetchNewMovieRequest(bool addID) async{
       String uri = '$server/movies/rand';
       final user = await UserSecureStorage.getUsername() ?? "Guest";
-      String id;
-
+      print(info["anything"].toString());
       if(addID == true){
-        id = info["movie_id"].toString();
+        String id = info["movie_id"].toString();
         final addMovie_response = await http.post(Uri.parse('$server/user/movie/add'),headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           },
@@ -71,17 +71,15 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           print(jsonDecode(addMovie_response.body));
         }
       }
-      else{
-        id ="0";
-      }
 
       final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'filters': jsonEncode(selectedItems),
-        'id' : id,
-        'user' : user
+        'id' :jsonEncode(ids_list),
+        'user' : user,
+        "anything": info["anything"].toString()
       }));
 
       if(response.statusCode == 200){
@@ -166,10 +164,9 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
                   Text("iMDB: "+imdbRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
                   Text("Rotten Tomatoes: "+rottenRating.toString(), style: TextStyle(color: Colors.white, fontSize: 18.0)),
                 ],
-              ),
-            ),
-              )
-            )
+              ),)
+            ),)
+          
           ] 
         ),
         Row(
@@ -264,13 +261,51 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             setState(() {
               isLoading = false;
             });
-            ids_list.add(info["movie_id"].toString());
+            if(response["return"] == true){
+            response["anything"]= info["anything"];
             Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
-                        return MovieDetails(info:response,selecteditems: selectedItems,ids_list: []);
+                        return MovieDetails(info:response,selecteditems: selectedItems,ids_list: ids_list);
                       },
                     )
                   );
+            }
+            else{
+              String text;
+              if(info["anything"] == false){
+                text = 'There are no movies available for you with these filters!';
+              }
+              else{
+                text = 'You\'ve seen all the other movies that we have :(';
+              }
+              showDialog(context: context, builder: (context) =>
+              AlertDialog(
+                title: Text('Oops!'),
+                content:  Text(text),
+              actions:[
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () { 
+                    Navigator.pop(context);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                            if(info["anything"] == false){
+                              return MoviePicker();
+                            }
+                            else{
+                              return UserPage();
+                            }
+                          },
+                        ),
+                      );
+                  }
+                ),
+                ],
+              ),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
@@ -290,12 +325,52 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             setState(() {
               isLoading = false;
             });
+            if(response["return"] == true){
+            response["anything"]= info["anything"];
+            print(ids_list);
             Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) {
                         return MovieDetails(info:response,selecteditems: selectedItems,ids_list: ids_list);
                       },
                     )
                   );
+            }
+            else{
+              String text;
+              if(info["anything"] == false){
+                text = 'There are no movies available for you with these filters!';
+              }
+              else{
+                text = 'You\'ve seen all the other movies that we have :(';
+              }
+              showDialog(context: context, builder: (context) =>
+              AlertDialog(
+                title: Text('Oops!'),
+                content: Text(text),
+              actions:[
+                TextButton(
+                  child: Text('Ok'),
+                  onPressed: () { 
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) {
+                        if(info["anything"] == false){
+                              return MoviePicker();
+                            }
+                            else{
+                              return UserPage();
+                            }
+                      },
+                    ),
+                  );
+                  }
+                ),
+                ],
+              ),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
               backgroundColor: const Color.fromARGB(60, 141, 141, 141), elevation: 20, padding: const EdgeInsets.fromLTRB(80, 5, 80, 5),
@@ -313,11 +388,3 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
     );
   }
 }
-
-// class GeneratedMovie extends StatelessWidget {
-//   const GeneratedMovie({
-//     Key? key,
-//   }) : super(key: key);
-
-  
-// }

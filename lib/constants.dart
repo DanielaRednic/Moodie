@@ -7,4 +7,4 @@ const kPrimaryLightColor = Color.fromARGB(255 ,141, 141, 141);
 
 const double defaultPadding = 16.0;
 
-const String server = "http://192.168.0.102:5000";
+const String server = "http://192.168.0.108:5000";

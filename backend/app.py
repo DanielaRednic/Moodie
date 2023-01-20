@@ -35,7 +35,6 @@ def get_duration_string(duration):
        minutes = int(duration)%60
        
        time_string= "{}h {}m".format(hours,minutes)
-       print(time_string)
        return time_string
 
 app = Flask(__name__)
@@ -56,16 +55,19 @@ def api_get_movie_by_id(given_id=None):
        for movie in result:
               return jsonify(
               {
-                     "id": movie["movie_id"],
+                     "movie_id":movie["movie_id"],
                      "title": movie["name"],
                      "genre": movie["genre"],
                      "year": movie["year"],
-                     "duration": movie["duration"],
+                     "duration": get_duration_string(movie["duration"]),
                      "rating": movie["rating"],
                      "description": movie["description"],
                      "trailer": movie["trailer"],
                      "poster": movie["poster"],
-                     "mood": movie["mood"]
+                     "mood": movie["mood"],
+                     "rt_rating": movie["rotten"],
+                     "imdb": movie["imdb"],
+                     "return": True
               }
               )
 
@@ -120,7 +122,7 @@ def api_get_user_movies():
 
               final_list=[]
               for movie in resulted_movies:
-                     print(movie)
+                     print(movie["name"])
                      print(dict_movies_user.get(movie["movie_id"]))
                      final_list.append(dict([
                             ("year",movie["year"]),
@@ -129,7 +131,6 @@ def api_get_user_movies():
                             ("rating",dict_movies_user.get(movie["movie_id"])),
                             ("id",movie["movie_id"])
                      ]))
-              print(final_list)
               return jsonify({
                      "movies":final_list,
                      "return": True
@@ -207,9 +208,22 @@ def add_movie_to_db():
 @app.route('/movies/rand', methods=["GET","POST"])
 def api_get_random_movie():
        data = request.json
-       print(data["anything"])
+       print("Any movie:",data["anything"])
+       
+       ids=[]
+       if(data["id"] !="0"):
+              ids= list(data["id"][1:-1].split(","))
+              for i in range(len(ids)):
+                     ids[i]= int(ids[i][1:-1])
+       
+       if data["user"] != "Guest":
+              results = DB.get_user_movies_ids(data["user"])
+              for result in results["movies"]:
+                     ids.append(result["movie_id"])
+       
        if(data["anything"] == "true"):
               filters={}
+              filters["ids"]= ids 
               result = DB.get_random_movie(filters)
               if(result):
                      for movie in result:
@@ -226,20 +240,20 @@ def api_get_random_movie():
                                    "poster": movie["poster"],
                                    "mood": movie["mood"],
                                    "rt_rating": movie["rotten"],
-                                   "imdb": movie["imdb"]
+                                   "imdb": movie["imdb"],
+                                   "return": True
                             }
                             )
               return jsonify({
                      "error": "No movie found",
                      "return": False
               })
-              
+             
        data_list= list(data["filters"][1:-1].split(","))
        
        for i in range(len(data_list)):
               data_list[i]= data_list[i][1:-1]
-              
-       print(data_list)
+       
        
        moods = [
               'Adventurous',
@@ -300,14 +314,7 @@ def api_get_random_movie():
               ]
        
        filters = {}
-       ids=[]
-       if data["user"] != "Guest":
-              results = DB.get_user_movies_ids(data["user"])
-              for result in results["movies"]:
-                     ids.append(result["movie_id"])
-       if int(data["id"]) != 0:
-              ids.append(int(data["id"]))
-              
+
        filters["ids"]= ids 
        for duration in durations:
               if duration in data_list:
@@ -343,6 +350,7 @@ def api_get_random_movie():
        if len(mood_list) != 0:
               filters["moods"]= mood_list
        
+       print("Filters:\n",filters)
        result = DB.get_random_movie(filters)
        if(result):
               for movie in result:

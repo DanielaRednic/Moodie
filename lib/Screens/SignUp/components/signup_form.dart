@@ -91,7 +91,8 @@ class _SignUpForm extends State<SignUpForm> {
                   child: Icon(Icons.person, color: Colors.white),
                 ),
               ),
-            ),
+            )
+          ),
           PasswordTextField(controller: passwordController),
           ConfirmPasswordTextField(controller: confirmPasswordController),
           const SizedBox(height: defaultPadding / 2, ),

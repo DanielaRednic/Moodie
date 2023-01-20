@@ -453,6 +453,7 @@ class _HomePageState extends State<HomePage> {
             final jsonResponse= await fetchRequest(false);
             print(jsonResponse["return"]);
             if(jsonResponse["return"] == true){
+              jsonResponse["anything"]= false;
               Navigator.push(
               context,
               MaterialPageRoute(
@@ -497,6 +498,7 @@ class _HomePageState extends State<HomePage> {
             final jsonResponse= await fetchRequest(true);
             print(jsonResponse["return"]);
             if(jsonResponse["return"] == true){
+            jsonResponse["anything"]= true;
             Navigator.push(
               context,
               MaterialPageRoute(

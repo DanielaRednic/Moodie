@@ -10,6 +10,7 @@ import 'dart:convert';
 
 import '../../../user_details.dart';
 import 'see_details.dart';
+import 'seedetails_builder.dart';
 
 class MovieList extends StatefulWidget {
   const MovieList({super.key});
@@ -26,6 +27,17 @@ class _MovieListState extends State<MovieList> {
       String uri = '$server/user/get/movies?user=$user';
       final response = await http.get(Uri.parse(uri));
 
+      if(response.statusCode == 200){
+        return jsonDecode(response.body);
+      }else {
+        throw Exception('Failed fetching movies');
+      }
+    }
+  
+  Future<LinkedHashMap<String,dynamic>> getMovieRequest(int id) async{
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
+      String uri = '$server/movies?id=$id';
+      final response = await http.get(Uri.parse(uri));
       if(response.statusCode == 200){
         return jsonDecode(response.body);
       }else {
@@ -197,13 +209,13 @@ class _MovieListState extends State<MovieList> {
                 elevation: 20
             ),
             onPressed:() async{
-            final jsonResponse = await fetchRequest();
-            if(jsonResponse.isNotEmpty){
+            final jsonResponse = await getMovieRequest(item["id"]);
+            if(jsonResponse["return"]== true){
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return SeeDetails(info: item["id"]);
+                  return SeeDetailsBuilder(info:jsonResponse);
                 },
               ),
             );
