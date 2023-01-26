@@ -56,6 +56,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
       String uri = '$server/movies/rand';
       final user = await UserSecureStorage.getUsername() ?? "Guest";
       print(info["anything"].toString());
+      print(ids_list);
       if(addID == true){
         String id = info["movie_id"].toString();
         final addMovie_response = await http.post(Uri.parse('$server/user/movie/add'),headers: <String, String>{
@@ -71,13 +72,16 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
           print(jsonDecode(addMovie_response.body));
         }
       }
-
+      String ids_to_be_sent="0";
+      if(ids_list.isNotEmpty){
+        ids_to_be_sent= jsonEncode(ids_list);
+      }
       final response = await http.post(Uri.parse(uri),headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'filters': jsonEncode(selectedItems),
-        'id' :jsonEncode(ids_list),
+        'id' :ids_to_be_sent,
         'user' : user,
         "anything": info["anything"].toString()
       }));
@@ -261,6 +265,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             setState(() {
               isLoading = false;
             });
+
             if(response["return"] == true){
             response["anything"]= info["anything"];
             Navigator.pushReplacement(context, MaterialPageRoute(
