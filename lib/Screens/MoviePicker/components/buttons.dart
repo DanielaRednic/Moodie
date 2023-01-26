@@ -153,7 +153,7 @@ class _HomePageState extends State<HomePage> {
   void _showMultiSelectLength() async {
     // a list of selectable movie lengths
     final List<String> time = [
-    'over 3 hours', '2-3 hours', 'over 2 hours', '1.5-2 hours', 'under 1.5 hours'];
+    'over 3 hours', '2-3 hours', 'over 2 hours', '1.5-2 hours','over 1.5 hours', 'under 1.5 hours'];
 
     final List<String>? results = await showDialog(
       context: context,

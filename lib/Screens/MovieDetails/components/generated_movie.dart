@@ -92,6 +92,24 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
         throw Exception('Failed fetching movie');
       }
     }
+
+    Future<LinkedHashMap<String,dynamic>> addNewMovieRequest() async{
+      String uri = '$server/user/movie/add';
+      final user = await UserSecureStorage.getUsername() ?? "Guest";
+      final response = await http.post(Uri.parse(uri),headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'id' :info["movie_id"].toString(),
+        'user' : user,
+      }));
+
+      if(response.statusCode == 200){
+        return jsonDecode(response.body);
+      }else {
+        throw Exception('Failed fetching movie');
+      }
+    }
     
     String movieTitle = info["title"];
     String moviePoster = info["poster"];
@@ -146,7 +164,7 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             ],
             ),
             Container(
-              width: MediaQuery.of(context).size.width*0.60,
+              width: MediaQuery.of(context).size.width*0.58,
               height: MediaQuery.of(context).size.height*0.25,
               child: SingleChildScrollView(
               child: Card(
@@ -237,8 +255,15 @@ class _YouTubePlayerFlutterState extends State<YouTubePlayerFlutter> {
             Column(
               children: [
                 ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
               ids_list=[];
+              setState(() {
+                isLoading = true;
+              });
+              final res = await addNewMovieRequest();
+              setState(() {
+                isLoading = false;
+              });
               Navigator.push(
                 context,
                 MaterialPageRoute(

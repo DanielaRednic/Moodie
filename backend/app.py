@@ -385,7 +385,7 @@ def add_rating():
        movie_id = data['id']
        user = data['user']
        
-       return DB.update_rating(int(rating), int(movie_id), user)
+       return DB.update_rating(float(rating), int(movie_id), user)
 
 # @app.route('/rating', methods=["PUT"])
 # def update_rating():
